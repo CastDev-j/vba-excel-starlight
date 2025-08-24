@@ -3,10 +3,22 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
+import astroExpressiveCode from 'astro-expressive-code'
 import tailwindcss from '@tailwindcss/vite';
+import fs from "node:fs";
+
+const myLang = JSON.parse(fs.readFileSync('./src/assets/vba.json', 'utf-8'));
 
 export default defineConfig({
 	integrations: [
+		astroExpressiveCode({
+			shiki: {
+				langs: [
+					myLang
+				],
+			},
+
+		}),
 		starlight({
 			title: 'VBA Excel',
 			description: 'Guía completa de VBA para Excel con ejemplos prácticos y referencia detallada',
