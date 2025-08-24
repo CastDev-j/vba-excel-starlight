@@ -30,7 +30,6 @@ export default defineConfig({
 				replacesTitle: false,
 			},
 
-			// Configuración de idioma
 			defaultLocale: 'es',
 
 			customCss: [
