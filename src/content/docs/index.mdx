@@ -1,36 +1,186 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
+title: VBA para Excel - Documentación Completa
+description: La guía más completa y práctica de VBA para Excel. Desde conceptos básicos hasta proyectos avanzados con ejemplos reales.
 template: splash
 hero:
-  tagline: Congrats on setting up a new Starlight project!
+  tagline: Domina VBA para Excel y automatiza tu trabajo como un profesional
   image:
     file: ../../assets/houston.webp
+    alt: VBA Excel Logo - Automatización y programación
   actions:
-    - text: Example Guide
-      link: /guides/example/
+    - text: Comenzar Ahora
+      link: /getting-started/introduction/
       icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
-      icon: external
+      variant: primary
+    - text: Ver Ejemplos Prácticos
+      link: /examples/beginner/auto-format/
+      icon: rocket
+      variant: secondary
+    - text: Referencia API Completa
+      link: /reference/
+      icon: open-book
+      variant: minimal
+    - text: GitHub del Proyecto
+      link: https://github.com/tu-usuario/vba-excel-docs
+      icon: github
       variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import { Card, CardGrid, Badge, Aside } from "@astrojs/starlight/components";
 
-## Next steps
+<Aside type="tip" title="¿Nuevo en VBA?">
+  No te preocupes, esta documentación está diseñada para llevarte desde cero
+  hasta nivel avanzado con ejemplos prácticos y casos reales de uso.
+</Aside>
+
+## ¿Por qué esta documentación?
+
+Esta guía va más allá de la documentación oficial de Microsoft. Aquí encontrarás **ejemplos prácticos**, **casos de uso reales** y **mejores prácticas** probadas en entornos empresariales.
 
 <CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
-	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
-	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
-	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
-	</Card>
+  <Card title="Aprende desde Cero" icon="star">
+    Explicaciones claras y progresivas, desde tu primer "Hello World" hasta
+    sistemas complejos de automatización. **Perfecto para:** Principiantes y
+    usuarios de Excel que quieren automatizar tareas.
+  </Card>
+
+{" "}
+
+<Card title="Ejemplos Prácticos" icon="rocket">
+  Más de **50 proyectos completos** organizados por nivel de dificultad, desde
+  calculadoras simples hasta sistemas ERP mini. **Incluye:** Código fuente,
+  explicaciones paso a paso y archivos de ejemplo descargables.
+</Card>
+
+{" "}
+
+<Card title="Arquitectura Sólida" icon="puzzle">
+  Aprende el **modelo de objetos de Excel** de forma estructurada con diagramas
+  interactivos y relaciones entre objetos. **Cubre:** Application, Workbook,
+  Worksheet, Range, Charts, PivotTables y más.
+</Card>
+
+  <Card title="Optimización Real" icon="setting">
+    Técnicas de **optimización de rendimiento** probadas en proyectos reales con
+    miles de filas de datos. **Aprende:** Screen updating, cálculos, manejo de
+    memoria y debugging avanzado.
+  </Card>
 </CardGrid>
+
+## Rutas de Aprendizaje
+
+<CardGrid>
+  <Card title="Ruta Principiante" icon="approve-check">
+    **Duración estimada:** 2-3 semanas 1. [Introducción a
+    VBA](/getting-started/introduction/) 2. [Sintaxis
+    Básica](/syntax/variables-datatypes/) 3. [Primeros
+    Objetos](/objects/application/) 4. [Ejemplos
+    Simples](/examples/beginner/calculator/)
+    <Badge text="Ideal para empezar" variant="success" />
+  </Card>
+
+{" "}
+
+<Card title="Ruta Práctica" icon="rocket">
+  **Duración estimada:** 1-2 meses 1. [Técnicas
+  Esenciales](/techniques/cell-operations/) 2. [Dashboard
+  Interactivo](/examples/intermediate/dashboard/) 3. [Sistema de
+  Inventario](/examples/intermediate/inventory-system/) 4. [Conexión a Bases de
+  Datos](/examples/intermediate/database-connection/)
+  <Badge text="Para casos reales" variant="note" />
+</Card>
+
+  <Card title="Ruta Avanzada" icon="star">
+    **Duración estimada:** 2-3 meses 1. [Add-ins
+    Personalizados](/examples/advanced/custom-addins/) 2. [Integración con
+    APIs](/examples/advanced/web-apis/) 3. [Web
+    Scraping](/examples/advanced/web-scraping/) 4. [Sistema ERP
+    Mini](/examples/advanced/mini-erp/)
+    <Badge text="Nivel profesional" variant="caution" />
+  </Card>
+</CardGrid>
+
+## Casos de Uso Populares
+
+¿Buscas automatizar algo específico? Estos son los casos más demandados:
+
+<CardGrid stagger>
+  <Card title="Reportes Automáticos" icon="document">
+    Genera reportes profesionales con formateo automático, gráficos dinámicos y
+    envío por email. **[Ver ejemplos →](/use-cases/accounting-automation/)**
+  </Card>
+
+{" "}
+
+<Card title="Dashboards Interactivos" icon="bars">
+  Crea paneles de control que se actualicen automáticamente con botones, filtros
+  y visualizaciones. **[Ver ejemplos →](/examples/intermediate/dashboard/)**
+</Card>
+
+{" "}
+
+<Card title="Procesamiento de Datos" icon="document">
+  Limpia, procesa y transforma grandes volúmenes de datos de múltiples fuentes.
+  **[Ver ejemplos →](/techniques/import-export/)**
+</Card>
+
+  <Card title="Formularios Dinámicos" icon="list-format">
+    Desarrolla interfaces de usuario intuitivas con validación automática y
+    lógica de negocio. **[Ver ejemplos
+    →](/examples/intermediate/dynamic-forms/)**
+  </Card>
+</CardGrid>
+
+## Lo que hace única esta documentación
+
+<Aside type="note">
+  **Actualizada constantemente** - Esta documentación se mantiene al día con las
+  últimas versiones de Excel y mejores prácticas de la industria.
+</Aside>
+
+- **Enfoque práctico**: Cada concepto viene con ejemplos reales de uso
+- **Búsqueda avanzada**: Encuentra rápidamente lo que necesitas
+- **Modo oscuro**: Perfecto para programar de noche
+- **Referencias cruzadas**: Navegación intuitiva entre conceptos relacionados
+
+## Comunidad y Contribuciones
+
+<CardGrid>
+  <Card title="Únete a la Comunidad" icon="comment">
+    Forma parte de nuestra comunidad de desarrolladores VBA en "Pendiente". Comparte
+    tus proyectos y resuelve dudas. **[Unirse al "Pendiente"
+    →]()**
+  </Card>
+
+  <Card title="Contribuir" icon="github">
+    ¿Encontraste un error o quieres añadir contenido? Las contribuciones son
+    bienvenidas. **[Ver guía de contribución
+    →](https://github.com/tu-usuario/vba-excel-docs/blob/main/CONTRIBUTING.md)**
+  </Card>
+</CardGrid>
+
+## Próximos pasos recomendados
+
+Si eres **nuevo en VBA**, empieza por:
+
+1. **[Configurar tu entorno →](/getting-started/setup/)** - Habilita el Developer Tab
+2. **[Tu primer programa →](/getting-started/hello-world/)** - Hello World paso a paso
+3. **[Conceptos fundamentales →](/getting-started/concepts/)** - Entiende la base
+
+Si ya **tienes experiencia básica**, prueba:
+
+1. **[Objetos fundamentales →](/objects/application/)** - Domina el modelo de objetos
+2. **[Técnicas esenciales →](/techniques/cell-operations/)** - Operaciones avanzadas con celdas
+3. **[Primer proyecto →](/examples/beginner/auto-format/)** - Automatiza el formato de documentos
+
+Si buscas **casos específicos**, ve directamente a:
+
+- **[Casos de uso →](/use-cases/)** - Por industria o función
+- **[Ejemplos por nivel →](/examples/)** - Organizados por dificultad
+- **[Referencia API →](/reference/)** - Consulta rápida de objetos y métodos
+
+---
+
+<Aside type="tip" title="Consejo">
+  Apoya este proyecto dándole una estrella en GitHub si te está siendo útil.
+</Aside>
