@@ -25,7 +25,8 @@ export default defineConfig({
 
 			// Logo personalizado (opcional)
 			logo: {
-				src: './src/assets/vba-logo.svg',
+				dark: './src/assets/dark-excel-logo.svg',
+				light: './src/assets/light-excel-logo.svg',
 				replacesTitle: false,
 			},
 
