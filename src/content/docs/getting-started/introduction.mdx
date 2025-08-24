@@ -1,4 +1,75 @@
 ---
-title: ¿Qué es VBA? ¿Por qué usarlo?
-order: 1
+title: "Introducción a VBA"
+description: "Descubre qué es VBA y por qué usarlo para automatizar Excel"
+sidebar:
+  order: 1
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+} from "@astrojs/starlight/components";
+
+# ¿Qué es VBA?
+
+**VBA (Visual Basic for Applications)** es un lenguaje de programación que permite automatizar tareas en Excel.
+
+En lugar de hacer clic manualmente 50 veces para formatear un reporte, escribes un código que lo haga automáticamente.
+
+## ¿Por qué usar VBA?
+
+<CardGrid>
+  <Card title="Automatización" icon="rocket">
+    Elimina tareas repetitivas. Un botón puede hacer el trabajo de horas.
+    <Badge text="Ahorra tiempo" variant="success" />
+  </Card>
+
+{" "}
+
+<Card title="Funciones Personalizadas" icon="puzzle">
+  Crea tus propias fórmulas cuando las de Excel no son suficientes.
+  <Badge text="Sin límites" variant="note" />
+</Card>
+
+  <Card title="Interfaces Profesionales" icon="setting">
+    Botones, formularios y menús que simplifiquen el trabajo para otros.
+    <Badge text="Fácil de usar" variant="caution" />
+  </Card>
+</CardGrid>
+
+## Ejemplo Real
+
+**Sin VBA:** Abrir 10 archivos, copiar datos manualmente, formatear, hacer gráficos. **Tiempo: 3 horas.**
+
+**Con VBA:** Clic en un botón, todo se hace automáticamente. **Tiempo: 2 minutos.**
+
+<Code
+  code={`Sub GenerarReporte()
+    ' Abrir archivos automáticamente
+    ' Procesar datos
+    ' Crear gráficos
+    ' Guardar resultado
+End Sub`}
+  lang="VBA"
+  title="Ejemplo de automatización"
+/>
+
+## ¿Es difícil?
+
+<Aside type="tip">Si sabes usar fórmulas de Excel, puedes aprender VBA.</Aside>
+
+- **Primera semana:** Tu primer programa funcional
+- **Primer mes:** Automatizar reportes completos
+- **Tres meses:** Crear sistemas profesionales
+
+## Próximo Paso
+
+<Card title="Configurar Excel" icon="setting">
+Habilita las herramientas de desarrollo para empezar a programar.
+
+**[Ir a Configuración →](/getting-started/setup/)**
+
+</Card>
