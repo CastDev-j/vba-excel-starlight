@@ -1,4 +1,304 @@
 ---
-title: Aritméticos, lógicos, comparación
-order: 2
+title: "Aritméticos, lógicos, comparación"
+description: "Domina todos los operadores de VBA: matemáticos, lógicos y de comparación con ejemplos prácticos"
+sidebar:
+  order: 2
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+} from "@astrojs/starlight/components";
+
+Los operadores permiten realizar cálculos, comparaciones y evaluaciones lógicas en VBA.
+
+## Operadores Aritméticos
+
+<CardGrid>
+  <Card title="Básicos" icon="document">
+    `+` Suma • `-` Resta • `*` Multiplicación • `/` División
+  </Card>
+
+  <Card title="Especiales" icon="puzzle">
+    `^` Potencia • `\` División entera • `Mod` Módulo (residuo)
+  </Card>
+</CardGrid>
+
+<Code
+  code={`Sub OperadoresAritmeticos()
+    Dim a As Double, b As Double
+    a = 10
+    b = 3
+    
+    Range("A1").Value = a + b    ' 13
+    Range("A2").Value = a - b    ' 7
+    Range("A3").Value = a * b    ' 30
+    Range("A4").Value = a / b    ' 3.33333...
+    Range("A5").Value = a ^ b    ' 1000 (10 elevado a 3)
+    Range("A6").Value = a \\ b    ' 3 (división sin decimales)
+    Range("A7").Value = a Mod b  ' 1 (residuo de 10/3)
+End Sub`}
+  lang="VBA"
+  title="Operadores aritméticos"
+/>
+
+### Casos Prácticos
+
+<Code
+  code={`Sub CalculosComunes()
+    Dim precio As Double, cantidad As Integer
+    Dim subtotal As Double, iva As Double, total As Double
+    
+    precio = Range("A1").Value
+    cantidad = Range("B1").Value
+    
+    ' Cálculos comerciales
+    subtotal = precio * cantidad
+    iva = subtotal * 0.16
+    total = subtotal + iva
+    
+    ' Verificar si es múltiplo de 10 para descuento
+    If cantidad Mod 10 = 0 Then
+        total = total * 0.95  ' 5% descuento
+        Range("D1").Value = "¡Descuento aplicado!"
+    End If
+    
+    Range("C1").Value = total
+End Sub`}
+  lang="VBA"
+  title="Ejemplo comercial"
+/>
+
+## Operadores de Comparación
+
+<Code
+  code={`Sub OperadoresComparacion()
+    Dim x As Integer, y As Integer
+    x = 10
+    y = 5
+    
+    Range("A1").Value = (x = y)   ' False (igual)
+    Range("A2").Value = (x <> y)  ' True (diferente)
+    Range("A3").Value = (x > y)   ' True (mayor)
+    Range("A4").Value = (x < y)   ' False (menor)
+    Range("A5").Value = (x >= y)  ' True (mayor o igual)
+    Range("A6").Value = (x <= y)  ' False (menor o igual)
+End Sub`}
+  lang="VBA"
+  title="Comparaciones"
+/>
+
+### Comparando Texto
+
+<Code
+  code={`Sub CompararTexto()
+    Dim nombre1 As String, nombre2 As String
+    nombre1 = "Ana"
+    nombre2 = "ana"
+    
+    ' Comparación normal (sensible a mayúsculas)
+    Range("A1").Value = (nombre1 = nombre2)  ' False
+    
+    ' Comparación sin mayúsculas
+    Range("A2").Value = (UCase(nombre1) = UCase(nombre2))  ' True
+    
+    ' Verificar si contiene texto
+    Range("A3").Value = (InStr(nombre1, "An") > 0)  ' True
+End Sub`}
+  lang="VBA"
+  title="Comparar strings"
+/>
+
+## Operadores Lógicos
+
+<CardGrid>
+  <Card title="AND" icon="document">
+    Ambas condiciones deben ser verdaderas
+    <Badge text="Restrictivo" variant="caution" />
+  </Card>
+
+{" "}
+<Card title="OR" icon="document">
+  Al menos una condición debe ser verdadera
+  <Badge text="Permisivo" variant="success" />
+</Card>
+
+  <Card title="NOT" icon="document">
+    Invierte el resultado (True → False)
+    <Badge text="Negación" variant="note" />
+  </Card>
+</CardGrid>
+
+<Code
+  code={`Sub OperadoresLogicos()
+    Dim edad As Integer, salario As Double, esActivo As Boolean
+    
+    edad = Range("A1").Value
+    salario = Range("B1").Value  
+    esActivo = Range("C1").Value
+    
+    ' AND - Ambas condiciones
+    If edad >= 18 And salario > 15000 Then
+        Range("D1").Value = "Crédito aprobado"
+    End If
+    
+    ' OR - Al menos una condición
+    If edad > 65 Or salario < 5000 Then
+        Range("E1").Value = "Descuento especial"
+    End If
+    
+    ' NOT - Negación
+    If Not esActivo Then
+        Range("F1").Value = "Reactivar cuenta"
+    End If
+End Sub`}
+  lang="VBA"
+  title="Lógica con AND, OR, NOT"
+/>
+
+## Operador de Concatenación
+
+<Code
+  code={`Sub Concatenacion()
+    Dim nombre As String, apellido As String
+    Dim edad As Integer, ciudad As String
+    
+    nombre = Range("A1").Value
+    apellido = Range("B1").Value
+    edad = Range("C1").Value
+    ciudad = Range("D1").Value
+    
+    ' Concatenar con &
+    Dim mensaje As String
+    mensaje = nombre & " " & apellido & " (" & edad & ") - " & ciudad
+    
+    Range("E1").Value = mensaje
+    ' Resultado: "Juan Pérez (25) - México"
+End Sub`}
+  lang="VBA"
+  title="Unir texto con &"
+/>
+
+## Precedencia de Operadores
+
+<Aside type="tip">
+  VBA evalúa operadores en este orden: `()` → `^` → `*,/` → `\` → `Mod` → `+,-`
+  → Comparación → `Not` → `And` → `Or`
+</Aside>
+
+<Code
+  code={`Sub Precedencia()
+    Dim resultado As Double
+    
+    ' Sin paréntesis
+    resultado = 2 + 3 * 4    ' = 14 (no 20)
+    Range("A1").Value = resultado
+    
+    ' Con paréntesis para claridad
+    resultado = (2 + 3) * 4  ' = 20
+    Range("A2").Value = resultado
+    
+    ' Comparación compleja
+    Dim x As Integer: x = 5
+    Dim esValido As Boolean
+    esValido = x > 3 And x < 10 Or x = 15
+    ' Se evalúa como: (x > 3 And x < 10) Or (x = 15)
+    Range("A3").Value = esValido  ' True
+End Sub`}
+  lang="VBA"
+  title="Orden de evaluación"
+/>
+
+## Ejemplo Práctico Completo
+
+Sistema de evaluación de empleados:
+
+<Code
+  code={`Sub EvaluarEmpleado()
+    ' Datos del empleado
+    Dim antiguedad As Integer, ventas As Double
+    Dim cumpleMetas As Boolean, tieneQuejas As Boolean
+    Dim bonificacion As Double, categoria As String
+    
+    ' Obtener datos
+    antiguedad = Range("A2").Value
+    ventas = Range("B2").Value
+    cumpleMetas = Range("C2").Value
+    tieneQuejas = Range("D2").Value
+    
+    ' Calcular bonificación usando múltiples operadores
+    bonificacion = ventas * 0.1  ' Base 10%
+    
+    ' Bonificación por antigüedad
+    If antiguedad >= 5 Then
+        bonificacion = bonificacion * 1.5  ' +50%
+    ElseIf antiguedad >= 2 Then
+        bonificacion = bonificacion * 1.2  ' +20%
+    End If
+    
+    ' Evaluación de desempeño
+    If cumpleMetas And Not tieneQuejas And ventas > 50000 Then
+        categoria = "EXCELENTE"
+        bonificacion = bonificacion * 2  ' Doble bonificación
+    ElseIf cumpleMetas Or ventas > 30000 Then
+        categoria = "BUENO"
+    ElseIf tieneQuejas And ventas < 20000 Then
+        categoria = "REQUIERE MEJORA"
+        bonificacion = bonificacion * 0.5  ' Reducir bonificación
+    Else
+        categoria = "PROMEDIO"
+    End If
+    
+    ' Mostrar resultados
+    Range("E2").Value = categoria
+    Range("F2").Value = bonificacion
+    Range("G2").Value = "Evaluado: " & Date
+End Sub`}
+  lang="VBA"
+  title="Sistema de evaluación"
+/>
+
+## Operadores con Fechas
+
+<Code
+  code={`Sub OperadoresFechas()
+    Dim fechaInicio As Date, fechaFin As Date
+    Dim diasTranscurridos As Integer
+    
+    fechaInicio = #1/1/2024#
+    fechaFin = Date  ' Hoy
+    
+    ' Resta de fechas da días
+    diasTranscurridos = fechaFin - fechaInicio
+    
+    ' Sumar/restar días
+    Dim fechaVencimiento As Date
+    fechaVencimiento = fechaFin + 30  ' 30 días después
+    
+    Range("A1").Value = "Días transcurridos: " & diasTranscurridos
+    Range("A2").Value = "Vence: " & fechaVencimiento
+End Sub`}
+  lang="VBA"
+  title="Operaciones con fechas"
+/>
+
+## Documentación Microsoft
+
+<Card title="Referencias Oficiales" icon="external">
+
+- [VBA Operators](https://docs.microsoft.com/en-us/office/vba/language/reference/user-interface-help/operator-summary)
+- [Operator Precedence](https://docs.microsoft.com/en-us/office/vba/language/reference/user-interface-help/operator-precedence)
+
+</Card>
+
+## Próximo Paso
+
+<Card title="Estructuras de Control" icon="puzzle">
+Aprende If/Else, For, While y otras estructuras para controlar el flujo del programa.
+
+**[Ir a Estructuras →](/syntax/control-structures/)**
+
+</Card>

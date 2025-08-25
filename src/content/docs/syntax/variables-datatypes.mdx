@@ -1,4 +1,298 @@
 ---
-title: Variables, String, Integer, etc.
-order: 1
+title: "Variables, String, Integer, etc."
+description: "Aprende a declarar y usar variables con todos los tipos de datos en VBA"
+sidebar:
+  order: 1
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+  Steps,
+} from "@astrojs/starlight/components";
+
+Las variables almacenan información que tu programa necesita recordar temporalmente.
+
+## Declarar Variables
+
+<Code
+  code={`Sub DeclaracionBasica()
+    ' Siempre declara tus variables
+    Dim nombre As String
+    Dim edad As Integer
+    Dim activo As Boolean
+    
+    ' Asignar valores
+    nombre = "María"
+    edad = 30
+    activo = True
+End Sub`}
+  lang="VBA"
+  title="Declaración básica"
+/>
+
+<Aside type="tip">
+  Ordena tus declaraciones y usa comentarios para claridad.
+</Aside>
+
+## Tipos de Datos Principales
+
+### Texto (String)
+
+<Code
+  code={`Sub EjemploString()
+    Dim cliente As String
+    Dim mensaje As String
+    
+    cliente = "Juan Pérez"
+    mensaje = "Bienvenido " & cliente  ' Concatenar con &
+    
+    Range("A1").Value = mensaje
+    Range("A2").Value = "Longitud: " & Len(cliente)  ' 10 caracteres
+End Sub`}
+  lang="VBA"
+  title="Trabajando con String"
+/>
+
+### Números Enteros (Integer, Long)
+
+<CardGrid>
+  <Card title="Integer" icon="document">
+    Números de -32,768 a 32,767
+    <Badge text="Para contadores simples" variant="note" />
+  </Card>
+
+  <Card title="Long" icon="document">
+    Números hasta 2 mil millones
+    <Badge text="Para filas de Excel" variant="success" />
+  </Card>
+</CardGrid>
+
+<Code
+  code={`Sub EjemploEnteros()
+    Dim contador As Integer
+    Dim ultimaFila As Long
+    
+    contador = 100
+    ultimaFila = Cells(Rows.Count, 1).End(xlUp).Row  ' Puede ser > 32,767
+    
+    Range("A1").Value = contador
+    Range("A2").Value = "Última fila: " & ultimaFila
+End Sub`}
+  lang="VBA"
+  title="Integer vs Long"
+/>
+
+### Números Decimales (Single, Double)
+
+<CardGrid>
+  <Card title="Single" icon="document">
+    4 bytes, precisión limitada
+    <Badge text="Cálculos básicos" variant="note" />
+  </Card>
+
+  <Card title="Double" icon="document">
+    8 bytes, mayor precisión
+    <Badge text="Recomendado para dinero" variant="success" />
+  </Card>
+</CardGrid>
+
+<Code
+  code={`Sub EjemploDecimales()
+    Dim precio As Double
+    Dim descuento As Single
+    Dim total As Double
+    
+    precio = 1234.56
+    descuento = 0.15  ' 15%
+    total = precio * (1 - descuento)
+    
+    Range("A1").Value = "Precio: $" & precio
+    Range("A2").Value = "Total: $" & total
+End Sub`}
+  lang="VBA"
+  title="Single vs Double"
+/>
+
+### Verdadero/Falso (Boolean)
+
+<Code
+  code={`Sub EjemploBoolean()
+    Dim esActivo As Boolean
+    Dim tieneSaldo As Boolean
+    
+    esActivo = True
+    tieneSaldo = (Range("B1").Value > 0)  ' Evalúa condición
+    
+    If esActivo And tieneSaldo Then
+        Range("C1").Value = "Cliente válido"
+    Else
+        Range("C1").Value = "Cliente inactivo"
+    End If
+End Sub`}
+  lang="VBA"
+  title="Boolean en acción"
+/>
+
+### Fechas (Date)
+
+<Code
+  code={`Sub EjemploFechas()
+    Dim fechaHoy As Date
+    Dim fechaVencimiento As Date
+    Dim diasRestantes As Integer
+    
+    fechaHoy = Date  ' Fecha actual
+    fechaVencimiento = #12/31/2024#  ' Formato MM/dd/yyyy
+    diasRestantes = fechaVencimiento - fechaHoy
+    
+    Range("A1").Value = "Hoy: " & fechaHoy
+    Range("A2").Value = "Vence: " & fechaVencimiento
+    Range("A3").Value = "Días restantes: " & diasRestantes
+End Sub`}
+  lang="VBA"
+  title="Trabajando con fechas"
+/>
+
+## Declaración Múltiple
+
+<Code
+  code={`Sub DeclaracionMultiple()
+    ' Método 1: Una por línea (recomendado)
+    Dim nombre As String
+    Dim edad As Integer
+    Dim salario As Double
+    
+    ' Método 2: Múltiples en una línea
+    Dim x As Integer, y As Integer, z As Integer
+    
+    ' ¡CUIDADO! Esto NO funciona como esperas
+    Dim a, b, c As Integer  ' Solo 'c' es Integer, a y b son Variant
+End Sub`}
+  lang="VBA"
+  title="Formas de declarar"
+/>
+
+<Aside type="caution">
+  Al declarar múltiples variables en una línea, cada una necesita su tipo
+  explícito.
+</Aside>
+
+## Constantes
+
+Para valores que nunca cambian:
+
+<Code
+  code={`Sub EjemploConstantes()
+    ' Constantes - no pueden cambiar durante ejecución
+    Const IVA As Double = 0.16
+    Const EMPRESA As String = "Mi Empresa SA"
+    Const MAX_FILAS As Integer = 1000
+    
+    Dim precio As Double
+    Dim total As Double
+    
+    precio = Range("A1").Value
+    total = precio * (1 + IVA)
+    
+    Range("B1").Value = total
+    Range("C1").Value = EMPRESA
+End Sub`}
+  lang="VBA"
+  title="Usando constantes"
+/>
+
+## Conversiones de Tipo
+
+<Code
+  code={`Sub ConversionTipos()
+    Dim texto As String
+    Dim numero As Double
+    
+    ' String a Number
+    texto = "123.45"
+    numero = CDbl(texto)  ' Convierte a Double
+    
+    ' Number a String  
+    numero = 678.90
+    texto = CStr(numero)  ' Convierte a String
+    
+    ' Otras conversiones útiles
+    Dim entero As Integer
+    entero = CInt(123.7)  ' Resultado: 124 (redondea)
+    
+    Range("A1").Value = "Número: " & numero
+    Range("A2").Value = "Texto: " & texto
+    Range("A3").Value = "Entero: " & entero
+End Sub`}
+  lang="VBA"
+  title="Convertir tipos"
+/>
+
+## Ejemplo Práctico
+
+Sistema de cálculo de nómina:
+
+<Code
+  code={`Sub CalculoNomina()
+    ' Variables para empleado
+    Dim nombreEmpleado As String
+    Dim sueldoBase As Double
+    Dim horasExtra As Integer
+    Dim esActivo As Boolean
+    Dim fechaIngreso As Date
+    
+    ' Constantes
+    Const TARIFA_EXTRA As Double = 150
+    Const DESCUENTO_INFONAVIT As Double = 0.05
+    
+    ' Obtener datos de la hoja
+    nombreEmpleado = Range("A2").Value
+    sueldoBase = Range("B2").Value
+    horasExtra = Range("C2").Value
+    esActivo = Range("D2").Value
+    fechaIngreso = Range("E2").Value
+    
+    ' Calcular solo si está activo
+    If esActivo Then
+        Dim pagoExtra As Double
+        Dim descuento As Double
+        Dim sueldoNeto As Double
+        
+        pagoExtra = horasExtra * TARIFA_EXTRA
+        descuento = sueldoBase * DESCUENTO_INFONAVIT
+        sueldoNeto = sueldoBase + pagoExtra - descuento
+        
+        ' Mostrar resultados
+        Range("F2").Value = pagoExtra
+        Range("G2").Value = descuento  
+        Range("H2").Value = sueldoNeto
+        Range("I2").Value = "Calculado: " & Now
+    Else
+        Range("H2").Value = "EMPLEADO INACTIVO"
+    End If
+End Sub`}
+  lang="VBA"
+  title="Ejemplo práctico - Nómina"
+/>
+
+## Documentación Microsoft
+
+<Card title="Referencias Oficiales" icon="external">
+
+- [VBA Data Types](https://docs.microsoft.com/en-us/office/vba/language/reference/user-interface-help/data-type-summary)
+- [Declare Statement](https://docs.microsoft.com/en-us/office/vba/language/reference/user-interface-help/declare-statement)
+
+</Card>
+
+## Próximo Paso
+
+<Card title="Operadores" icon="puzzle">
+Aprende cómo usar operadores matemáticos, lógicos y de comparación.
+
+**[Ir a Operadores →](/syntax/operators/)**
+
+</Card>
