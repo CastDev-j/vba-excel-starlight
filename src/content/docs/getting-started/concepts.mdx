@@ -1,5 +1,179 @@
 ---
-title: Conceptos fundamentales
-order: 4
-
+title: "Conceptos fundamentales"
+description: "Introducción a los conceptos básicos que necesitas conocer antes de programar en VBA"
+sidebar:
+  order: 4
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+} from "@astrojs/starlight/components";
+
+Antes de escribir código VBA, necesitas entender estos 4 conceptos básicos.
+
+## ¿Qué es una Variable?
+
+Las variables son "cajas" donde guardas información temporalmente:
+
+<Code
+  code={`Sub EjemploBasico()
+    Dim nombre As String        ' Caja para texto
+    Dim cantidad As Integer     ' Caja para números
+    
+    nombre = "Pedro"           ' Guardar valor
+    cantidad = 10              ' Guardar número
+    
+    Range("A1").Value = nombre ' Usar la variable
+End Sub`}
+  lang="VBA"
+  title="Variables - concepto básico"
+/>
+
+## ¿Qué son los Objetos?
+
+En Excel, todo es un objeto: celdas, hojas, gráficos. Los objetos tienen:
+
+<CardGrid>
+  <Card title="Propiedades" icon="setting">
+    **Características** del objeto
+    
+    `Range("A1").Value` - contenido de la celda
+  </Card>
+
+  <Card title="Métodos" icon="rocket">
+    **Acciones** que puede hacer
+    
+    `Range("A1").Clear` - limpiar la celda
+  </Card>
+</CardGrid>
+
+<Code
+  code={`Sub ObjetosBasicos()
+    ' Objeto: Range (celda)
+    Range("A1").Value = "Hola"      ' Propiedad: contenido
+    Range("A1").Font.Bold = True    ' Propiedad: formato
+    Range("A1").Clear               ' Método: acción
+End Sub`}
+  lang="VBA"
+  title="Objetos en acción"
+/>
+
+## ¿Qué es un Procedimiento?
+
+Un procedimiento es un bloque de código que realiza una tarea:
+
+<Code
+  code={`Sub MiPrimerProcedimiento()
+    ' Todo el código va aquí dentro
+    Range("A1").Value = "¡Funciona!"
+    MsgBox "Procedimiento ejecutado"
+End Sub`}
+  lang="VBA"
+  title="Procedimiento básico"
+/>
+
+## ¿Qué son las Condiciones y Bucles?
+
+Te permiten tomar decisiones y repetir acciones:
+
+<Code
+  code={`Sub EjemploLogica()
+    Dim nota As Integer
+    nota = Range("A1").Value
+    
+    ' Condición: ¿Qué calificación tiene?
+    If nota >= 90 Then
+        Range("B1").Value = "Excelente"
+    Else
+        Range("B1").Value = "Puede mejorar"
+    End If
+    
+    ' Bucle: Escribir números del 1 al 5
+    Dim i As Integer
+    For i = 1 To 5
+        Range("C" & i).Value = i
+    Next i
+End Sub`}
+  lang="VBA"
+  title="Lógica básica"
+/>
+
+## Ejemplo Completo
+
+Combinando todos los conceptos - una calculadora simple:
+
+<Code
+  code={`Sub CalculadoraSimple()
+    ' Variables para guardar números
+    Dim numero1 As Double
+    Dim numero2 As Double
+    Dim resultado As Double
+    
+    ' Obtener números de las celdas
+    numero1 = Range("A1").Value
+    numero2 = Range("B1").Value
+    
+    ' Verificar que no sean cero
+    If numero1 = 0 Or numero2 = 0 Then
+        MsgBox "Ingrese números válidos"
+        Exit Sub
+    End If
+    
+    ' Calcular y mostrar resultado
+    resultado = numero1 + numero2
+    Range("C1").Value = resultado
+    Range("C1").Font.Bold = True
+    
+    MsgBox "Cálculo completado: " & resultado
+End Sub`}
+  lang="VBA"
+  title="Ejemplo integrado"
+/>
+
+## Lo que Verás Más Adelante
+
+<Aside type="note">
+  En las siguientes secciones profundizaremos cada uno de estos temas.
+</Aside>
+
+<CardGrid>
+  <Card title="Variables y Tipos" icon="pencil">
+    String, Integer, Double, Boolean y más tipos de datos
+  </Card>
+
+{" "}
+<Card title="Objetos de Excel" icon="star">
+  Application, Workbook, Worksheet, Range y sus propiedades
+</Card>
+
+{" "}
+<Card title="Estructuras de Control" icon="list-format">
+  If/Else, For/Next, Do/While y Select Case
+</Card>
+
+  <Card title="Procedimientos Avanzados" icon="document">
+    Funciones, parámetros, valores de retorno
+  </Card>
+</CardGrid>
+
+## Documentación Microsoft
+
+<Card title="Fundamentos VBA" icon="external">
+
+- [VBA Fundamentals](https://docs.microsoft.com/en-us/office/vba/library-reference/concepts/getting-started-with-vba-in-office)
+- [Excel Object Model Overview](https://docs.microsoft.com/en-us/office/vba/api/overview/excel)
+
+</Card>
+
+## Próximo Paso
+
+<Card title="Variables y Tipos de Datos" icon="star">
+Aprende en detalle cómo declarar y usar variables en VBA.
+
+**[Ir a Variables →](/syntax/variables-datatypes/)**
+
+</Card>

@@ -1,4 +1,191 @@
 ---
-title: Primer programa paso a paso
-order: 3
+title: "Primer programa paso a paso"
+description: "Crea tu primera macro en VBA con un ejemplo práctico y funcional"
+sidebar:
+  order: 3
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+  Steps,
+} from "@astrojs/starlight/components";
+
+
+Vamos a crear una macro que escriba "¡Hola Mundo!" en la celda A1 y la formatee automáticamente.
+
+## Crear la Macro
+
+<Steps>
+
+1. **Abrir Editor VBA**
+
+   - Presiona `Alt + F11`
+
+2. **Insertar Módulo**
+
+   - `Insert` → `Module`
+
+3. **Escribir el código**
+   - Pega el código en el módulo
+
+</Steps>
+
+<Code
+  code={`Sub HolaMundo()
+    ' Escribir texto en A1
+    Range("A1").Value = "¡Hola Mundo!"
+    
+    ' Formatear la celda
+    With Range("A1")
+        .Font.Bold = True
+        .Font.Size = 14
+        .Interior.Color = RGB(255, 255, 0)  ' Amarillo
+    End With
+    
+    ' Mensaje de confirmación
+    MsgBox "¡Tu primer programa VBA funciona!", vbInformation
+End Sub`}
+  lang="VBA"
+  title="HolaMundo.bas"
+/>
+
+## Ejecutar la Macro
+
+<CardGrid>
+  <Card title="Desde el Editor VBA" icon="code">
+    1. Coloca cursor en `Sub HolaMundo()`
+    2. Presiona `F5`
+    <Badge text="Más rápido para testing" variant="success" />
+  </Card>
+
+  <Card title="Desde Excel" icon="rocket">
+    1. Presiona `Alt + F8`
+    2. Selecciona `HolaMundo`
+    3. Clic en `Ejecutar`
+    <Badge text="Método estándar" variant="note" />
+  </Card>
+</CardGrid>
+
+## ¿Qué hace cada línea?
+
+<Code
+  code={`Range("A1").Value = "¡Hola Mundo!"    ' Escribir en celda A1
+.Font.Bold = True                        ' Texto en negrita  
+.Font.Size = 14                          ' Tamaño 14
+.Interior.Color = RGB(255, 255, 0)       ' Fondo amarillo
+MsgBox "mensaje"                         ' Ventana emergente`}
+  lang="VBA"
+  title="Explicación del código"
+/>
+
+## Crear un Botón
+
+Para que otros usuarios ejecuten tu macro fácilmente:
+
+<Steps>
+
+1. **Ir al Developer Tab**
+
+   - Clic en `Insert` → `Button (Form Control)`
+
+2. **Dibujar el botón**
+
+   - Arrastra en la hoja para crear el botón
+
+3. **Asignar macro**
+
+   - Selecciona `HolaMundo` de la lista
+   - Clic `OK`
+
+4. **Personalizar texto**
+   - Clic derecho → `Edit Text`
+   - Escribe: "Ejecutar Hola Mundo"
+
+</Steps>
+
+<Aside type="tip">
+  Ahora cualquier usuario puede ejecutar tu macro con solo hacer clic en el
+  botón.
+</Aside>
+
+## Mejorar el Programa
+
+Versión más completa con validación:
+
+<Code
+  code={`Sub HolaMundoMejorado()
+    ' Limpiar contenido anterior
+    Range("A1").Clear
+    
+    ' Verificar si A1 está vacía
+    If Range("A1").Value = "" Then
+        Range("A1").Value = "¡Hola Mundo VBA!"
+        
+        ' Formato profesional
+        With Range("A1")
+            .Font.Name = "Arial"
+            .Font.Bold = True
+            .Font.Size = 16
+            .Font.Color = RGB(0, 0, 255)      ' Azul
+            .Interior.Color = RGB(240, 240, 240)  ' Gris claro
+            .Borders.LineStyle = xlContinuous
+        End With
+        
+        MsgBox "Programa ejecutado correctamente"
+    End If
+End Sub`}
+  lang="VBA"
+  title="Versión mejorada"
+/>
+
+## Errores Comunes
+
+<CardGrid>
+  <Card title="Macro no aparece" icon="error">
+    **Causa**: Archivo no guardado como `.xlsm`
+    
+    **Solución**: `Guardar como` → `Excel Macro-Enabled Workbook`
+  </Card>
+
+  <Card title="Error de ejecución" icon="warning">
+    **Causa**: Hoja protegida o celda bloqueada
+    
+    **Solución**: Desproteger hoja antes de ejecutar
+  </Card>
+</CardGrid>
+
+## Guardar tu Trabajo
+
+<Aside type="caution">
+  **Importante**: Debes guardar como `.xlsm` para conservar las macros.
+</Aside>
+
+<Steps>
+
+1. `Archivo` → `Guardar como`
+2. Tipo: `Excel Macro-Enabled Workbook (*.xlsm)`
+3. Nombra tu archivo: `Mi_Primer_VBA.xlsm`
+
+</Steps>
+
+## Recursos Oficiales
+
+<Card title="Documentación Microsoft" icon="external">
+
+- [Getting Started with VBA](https://docs.microsoft.com/en-us/office/vba/library-reference/concepts/getting-started-with-vba-in-office)
+- [Excel VBA Reference](https://docs.microsoft.com/en-us/office/vba/api/overview/excel)
+
+</Card>
+
+## Próximo Paso
+
+<Card title="Conceptos Fundamentales" icon="star">
+Aprende variables, funciones y estructuras básicas de VBA.
+
+**[Ir a Conceptos →](/getting-started/concepts/)**
+
+</Card>

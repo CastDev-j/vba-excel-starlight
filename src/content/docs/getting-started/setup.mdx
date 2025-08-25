@@ -1,4 +1,103 @@
 ---
-title: Configurar Developer Tab
-order: 2
+title: "Configurar Developer Tab"
+description: "Habilita las herramientas de desarrollo en Excel para empezar a programar en VBA"
+sidebar:
+  order: 2
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+  Steps,
+} from "@astrojs/starlight/components";
+
+Para programar en VBA necesitas habilitar la **pestaña Desarrollador** en Excel.
+
+## Habilitar Developer Tab
+
+<Steps>
+
+1. **Abrir Opciones**
+   - `Archivo` → `Opciones`
+
+2. **Personalizar Cinta**
+   - Selecciona `Personalizar cinta de opciones`
+   - Marca la casilla `Developer`
+   - Clic `Aceptar`
+
+</Steps>
+
+## Herramientas Principales
+
+<CardGrid>
+  <Card title="Visual Basic" icon="open-book">
+    Editor VBA donde escribes código
+    <Badge text="Alt+F11" variant="note" />
+  </Card>
+
+  <Card title="Macros" icon="rocket">
+    Ejecutar y gestionar macros
+    <Badge text="Alt+F8" variant="note" />
+  </Card>
+</CardGrid>
+
+## Configurar Seguridad
+
+<Steps>
+
+1. **Trust Center**
+   - `Archivo` → `Opciones` → `Trust Center`
+   - `Trust Center Settings...`
+
+2. **Macro Settings**
+   - Selecciona `Disable all macros with notification`
+
+</Steps>
+
+<Aside type="tip">
+Esta configuración te preguntará antes de ejecutar macros, balanceando seguridad y funcionalidad.
+</Aside>
+
+## Guardar Archivos con Macros
+
+**Formato requerido**: `.xlsm` (Excel Macro-Enabled Workbook)
+
+<Steps>
+
+1. `Archivo` → `Guardar como`
+2. Tipo: `Excel Macro-Enabled Workbook (*.xlsm)`
+
+</Steps>
+
+## Problemas Comunes
+
+<CardGrid>
+  <Card title="Developer Tab no aparece" icon="error">
+    Reinicia Excel después de habilitar la opción
+  </Card>
+
+  <Card title="Macros no se ejecutan" icon="warning">
+    Verifica que el archivo sea `.xlsm` y permite macros cuando se solicite
+  </Card>
+</CardGrid>
+
+## Documentación Microsoft
+
+<Card title="Referencias Oficiales" icon="external">
+
+- [Show the Developer Tab](https://docs.microsoft.com/en-us/office/vba/library-reference/concepts/getting-started-with-vba-in-office#show-the-developer-tab)
+- [Enable or disable macros](https://support.microsoft.com/en-us/office/enable-or-disable-macros-in-office-files-12b036fd-d140-4e74-b45e-16fed1a7e5c6)
+
+</Card>
+
+## Próximo Paso
+
+<Card title="Tu Primer Programa VBA" icon="rocket">
+Ya tienes Excel configurado para programar.
+
+**[Crear Hello World →](/getting-started/hello-world/)**
+
+</Card>
