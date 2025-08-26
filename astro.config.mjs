@@ -66,6 +66,7 @@ export default defineConfig({
 
 				// SECCIÓN 3: MODELO DE OBJETOS DE EXCEL
 				{
+					badge: 'En desarrollo',
 					label: 'Modelo de Objetos Excel',
 					collapsed: true,
 					items: [
@@ -108,6 +109,7 @@ export default defineConfig({
 
 				// SECCIÓN 4: TÉCNICAS Y PATRONES COMUNES
 				{
+					badge: 'En desarrollo',
 					label: 'Técnicas Esenciales',
 					collapsed: true,
 					items: [
@@ -123,6 +125,7 @@ export default defineConfig({
 
 				// SECCIÓN 5: EJEMPLOS PRÁCTICOS POR CATEGORÍA
 				{
+					badge: 'En desarrollo',
 					label: 'Ejemplos Prácticos',
 					collapsed: true,
 					items: [
@@ -166,6 +169,7 @@ export default defineConfig({
 
 				// SECCIÓN 6: MEJORES PRÁCTICAS Y OPTIMIZACIÓN
 				{
+					badge: 'En desarrollo',
 					label: 'Mejores Prácticas',
 					collapsed: true,
 					items: [
@@ -180,6 +184,7 @@ export default defineConfig({
 
 				// SECCIÓN 7: CASOS DE USO ESPECÍFICOS
 				{
+					badge: 'En desarrollo',
 					label: 'Casos de Uso',
 					collapsed: true,
 					items: [
@@ -194,6 +199,7 @@ export default defineConfig({
 
 				// SECCIÓN 8: HERRAMIENTAS Y RECURSOS
 				{
+					badge: 'En desarrollo',
 					label: 'Herramientas y Recursos',
 					collapsed: true,
 					items: [
@@ -208,6 +214,7 @@ export default defineConfig({
 
 				// SECCIÓN 9: REFERENCIA COMPLETA
 				{
+					badge: 'En desarrollo',
 					label: 'Referencia API',
 					collapsed: true,
 					// Autogenerar desde directorio reference/
@@ -219,6 +226,7 @@ export default defineConfig({
 
 				// SECCIÓN 10: TROUBLESHOOTING Y FAQ
 				{
+					badge: 'En desarrollo',
 					label: 'Ayuda y Soluciones',
 					collapsed: true,
 					items: [
@@ -232,6 +240,7 @@ export default defineConfig({
 
 				// SECCIÓN 11: APÉNDICES
 				{
+					badge: 'En desarrollo',
 					label: 'Apéndices',
 					collapsed: true,
 					items: [
