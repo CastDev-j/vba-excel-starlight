@@ -1,6 +1,380 @@
 ---
-title: Arrays estáticos y dinámicos
+title: "Arrays estáticos y dinámicos"
+description: "Aprende a usar arrays (matrices) para almacenar múltiples valores de forma eficiente en VBA"
 order: 5
 ---
 
-Aún no hay contenido aquí. Pronto habrá ejemplos y explicaciones sobre cómo usar arrays en VBA.
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+} from "@astrojs/starlight/components";
+
+Los arrays permiten almacenar múltiples valores en una sola variable, como una lista organizada.
+
+## Arrays Estáticos
+
+El tamaño se define al declarar y no cambia:
+
+<Code
+  code={`Sub ArraysEstaticos()
+    ' Declarar arrays de tamaño fijo
+    Dim nombres(1 To 5) As String
+    Dim precios(0 To 9) As Double
+    Dim activos(1 To 3) As Boolean
+    
+    ' Asignar valores
+    nombres(1) = "Juan"
+    nombres(2) = "María"
+    nombres(3) = "Carlos"
+    
+    precios(0) = 99.99
+    precios(1) = 149.50
+    precios(2) = 75.25
+    
+    ' Usar en bucles
+    Dim i As Integer
+    For i = 1 To 3
+        Range("A" & i).Value = nombres(i)
+    Next i
+    
+    For i = 0 To 2
+        Range("B" & (i + 1)).Value = precios(i)
+    Next i
+End Sub`}
+  lang="VBA"
+  title="Arrays de tamaño fijo"
+/>
+
+<Aside type="tip">
+  Puedes usar índices desde 0 o desde 1. `(1 To 5)` es más claro que `(4)` que
+  va de 0 a 4.
+</Aside>
+
+## Arrays Dinámicos
+
+El tamaño se puede cambiar durante la ejecución:
+
+<Code
+  code={`Sub ArraysDinamicos()
+    ' Declarar sin tamaño
+    Dim vendedores() As String
+    Dim ventas() As Double
+    Dim ultimaFila As Integer
+    
+    ' Encontrar cuántos datos tenemos
+    ultimaFila = Cells(Rows.Count, "A").End(xlUp).Row
+    
+    ' Redimensionar arrays
+    ReDim vendedores(1 To ultimaFila)
+    ReDim ventas(1 To ultimaFila)
+    
+    ' Llenar arrays con datos de Excel
+    Dim i As Integer
+    For i = 1 To ultimaFila
+        vendedores(i) = Range("A" & i).Value
+        ventas(i) = Range("B" & i).Value
+    Next i
+    
+    ' Procesar datos del array
+    For i = 1 To ultimaFila
+        If ventas(i) > 50000 Then
+            Range("C" & i).Value = vendedores(i) & " - TOP SELLER"
+        End If
+    Next i
+End Sub`}
+  lang="VBA"
+  title="Arrays que cambian de tamaño"
+/>
+
+## Preserve - Mantener Datos
+
+<Code
+  code={`Sub ArraysPreserve()
+    Dim lista() As String
+    Dim contador As Integer
+    
+    contador = 0
+    
+    ' Agregar elementos dinámicamente
+    Do While Range("A" & (contador + 1)).Value <> ""
+        contador = contador + 1
+        
+        ' Redimensionar manteniendo datos anteriores
+        ReDim Preserve lista(1 To contador)
+        lista(contador) = Range("A" & contador).Value
+    Loop
+    
+    ' Mostrar todos los elementos
+    For i = 1 To contador
+        Range("B" & i).Value = "Item " & i & ": " & lista(i)
+    Next i
+    
+    Range("C1").Value = "Total elementos: " & contador
+End Sub`}
+  lang="VBA"
+  title="ReDim Preserve"
+/>
+
+<Aside type="caution">
+  `ReDim Preserve` solo puede cambiar la última dimensión del array y es más
+  lento que `ReDim`.
+</Aside>
+
+## Arrays Multidimensionales
+
+<Code
+  code={`Sub ArraysMultidimensionales()
+    ' Array 2D: filas y columnas
+    Dim tabla(1 To 3, 1 To 4) As String
+    Dim ventas(1 To 12, 1 To 4) As Double  ' 12 meses, 4 trimestres
+    
+    ' Llenar tabla
+    tabla(1, 1) = "Nombre"
+    tabla(1, 2) = "Apellido"
+    tabla(1, 3) = "Edad"
+    tabla(1, 4) = "Ciudad"
+    
+    tabla(2, 1) = "Juan"
+    tabla(2, 2) = "Pérez"
+    tabla(2, 3) = "25"
+    tabla(2, 4) = "México"
+    
+    ' Escribir a Excel
+    Dim fila As Integer, columna As Integer
+    For fila = 1 To 3
+        For columna = 1 To 4
+            Cells(fila, columna).Value = tabla(fila, columna)
+        Next columna
+    Next fila
+End Sub`}
+  lang="VBA"
+  title="Arrays 2D (tabla)"
+/>
+
+## Arrays desde Rangos
+
+<Code
+  code={`Sub ArraysDesdeRangos()
+    ' Cargar rango completo en array (muy rápido)
+    Dim datos As Variant
+    Dim resultado() As String
+    Dim ultimaFila As Integer, i As Integer
+    
+    ultimaFila = Range("A1").CurrentRegion.Rows.Count
+    datos = Range("A1:C" & ultimaFila).Value  ' Array automático
+    
+    ' Redimensionar array resultado
+    ReDim resultado(1 To ultimaFila)
+    
+    ' Procesar array en memoria (más rápido que Excel)
+    For i = 1 To ultimaFila
+        resultado(i) = datos(i, 1) & " - " & datos(i, 2) & " ($" & datos(i, 3) & ")"
+    Next i
+    
+    ' Escribir resultado de una vez
+    Range("D1:D" & ultimaFila).Value = Application.Transpose(resultado)
+End Sub`}
+  lang="VBA"
+  title="Arrays desde rangos de Excel"
+/>
+
+## Funciones Útiles para Arrays
+
+<Code
+  code={`Sub FuncionesArrays()
+    Dim numeros(1 To 5) As Integer
+    Dim textos() As String
+    
+    ' Llenar array con números
+    numeros(1) = 10
+    numeros(2) = 25
+    numeros(3) = 15
+    numeros(4) = 30
+    numeros(5) = 20
+    
+    ' Información del array
+    Range("A1").Value = "Índice menor: " & LBound(numeros)  ' 1
+    Range("A2").Value = "Índice mayor: " & UBound(numeros)  ' 5
+    Range("A3").Value = "Total elementos: " & (UBound(numeros) - LBound(numeros) + 1)  ' 5
+    
+    ' Arrays dinámicos
+    ReDim textos(1 To 3)
+    textos(1) = "Uno"
+    textos(2) = "Dos" 
+    textos(3) = "Tres"
+    
+    ' Limpiar array dinámico
+    Erase textos  ' Array queda sin elementos
+    
+    ' Join - Convertir array a string
+    ReDim textos(1 To 3)
+    textos(1) = "Rojo"
+    textos(2) = "Verde"
+    textos(3) = "Azul"
+    Range("B1").Value = Join(textos, ", ")  ' "Rojo, Verde, Azul"
+    
+    ' Split - Convertir string a array
+    Dim colores() As String
+    colores = Split("Amarillo;Naranja;Violeta", ";")
+    Range("B2").Value = "Primer color: " & colores(0)  ' "Amarillo"
+End Sub`}
+  lang="VBA"
+  title="Funciones LBound, UBound, Join, Split"
+/>
+
+## Ejemplo Práctico Completo
+
+Sistema de análisis de ventas usando arrays:
+
+<Code
+  code={`Sub AnalizarVentasConArrays()
+    ' Arrays para almacenar datos
+    Dim vendedores() As String
+    Dim ventas() As Double
+    Dim regiones() As String
+    Dim totalPorRegion(1 To 4) As Double
+    Dim nombreRegiones(1 To 4) As String
+    
+    ' Configurar nombres de regiones
+    nombreRegiones(1) = "NORTE"
+    nombreRegiones(2) = "SUR"
+    nombreRegiones(3) = "CENTRO"
+    nombreRegiones(4) = "OESTE"
+    
+    ' Obtener cantidad de datos
+    Dim ultimaFila As Integer, i As Integer, j As Integer
+    ultimaFila = Cells(Rows.Count, "A").End(xlUp).Row
+    
+    If ultimaFila < 2 Then
+        MsgBox "No hay datos para analizar"
+        Exit Sub
+    End If
+    
+    ' Redimensionar arrays dinámicos
+    ReDim vendedores(1 To ultimaFila - 1)
+    ReDim ventas(1 To ultimaFila - 1)
+    ReDim regiones(1 To ultimaFila - 1)
+    
+    ' Cargar datos en arrays
+    For i = 2 To ultimaFila
+        vendedores(i - 1) = Range("A" & i).Value
+        ventas(i - 1) = Range("B" & i).Value
+        regiones(i - 1) = UCase(Range("C" & i).Value)
+    Next i
+    
+    ' Calcular totales por región
+    For i = 1 To UBound(vendedores)
+        Select Case regiones(i)
+            Case "NORTE"
+                totalPorRegion(1) = totalPorRegion(1) + ventas(i)
+            Case "SUR"
+                totalPorRegion(2) = totalPorRegion(2) + ventas(i)
+            Case "CENTRO"
+                totalPorRegion(3) = totalPorRegion(3) + ventas(i)
+            Case Else
+                totalPorRegion(4) = totalPorRegion(4) + ventas(i)
+        End Select
+    Next i
+    
+    ' Encontrar mejor vendedor
+    Dim mejorVenta As Double, mejorVendedor As String
+    mejorVenta = 0
+    For i = 1 To UBound(ventas)
+        If ventas(i) > mejorVenta Then
+            mejorVenta = ventas(i)
+            mejorVendedor = vendedores(i)
+        End If
+    Next i
+    
+    ' Crear reporte en columnas E y F
+    Range("E1").Value = "ANÁLISIS DE VENTAS"
+    Range("E1").Font.Bold = True
+    Range("E2").Value = "=================="
+    
+    Dim fila As Integer
+    fila = 4
+    
+    ' Mostrar totales por región
+    Range("E" & fila).Value = "TOTALES POR REGIÓN:"
+    fila = fila + 1
+    
+    For i = 1 To 4
+        If totalPorRegion(i) > 0 Then
+            Range("E" & fila).Value = nombreRegiones(i) & ":"
+            Range("F" & fila).Value = "$" & totalPorRegion(i)
+            fila = fila + 1
+        End If
+    Next i
+    
+    ' Mostrar mejor vendedor
+    fila = fila + 1
+    Range("E" & fila).Value = "MEJOR VENDEDOR:"
+    Range("F" & fila).Value = mejorVendedor & " ($" & mejorVenta & ")"
+    
+    ' Calcular y mostrar promedio
+    Dim suma As Double, promedio As Double
+    For i = 1 To UBound(ventas)
+        suma = suma + ventas(i)
+    Next i
+    promedio = suma / UBound(ventas)
+    
+    fila = fila + 1
+    Range("E" & fila).Value = "PROMEDIO:"
+    Range("F" & fila).Value = "$" & Round(promedio, 2)
+    
+    MsgBox "Análisis completado. Mejor vendedor: " & mejorVendedor
+End Sub`}
+  lang="VBA"
+  title="Sistema de análisis con arrays"
+/>
+
+## Comparación: Con y Sin Arrays
+
+<CardGrid>
+  <Card title="Sin Arrays (Lento)" icon="warning">
+    ```vba
+    ' Leer celda por celda - 1000 iteraciones = 1000 accesos a Excel
+    For i = 1 To 1000
+        suma = suma + Range("A" & i).Value
+    Next i
+    ```
+    <Badge text="Lento para muchos datos" variant="caution" />
+  </Card>
+
+  <Card title="Con Arrays (Rápido)" icon="rocket">
+    ```vba
+    ' Leer todo de una vez - 1 acceso a Excel
+    datos = Range("A1:A1000").Value
+    For i = 1 To 1000
+        suma = suma + datos(i, 1)
+    Next i
+    ```
+    <Badge text="Hasta 100x más rápido" variant="success" />
+  </Card>
+</CardGrid>
+
+<Aside type="tip">
+  Para procesar muchos datos, siempre carga a arrays, procesa en memoria, y
+  escribe de vuelta a Excel.
+</Aside>
+
+## Documentación Microsoft
+
+<Card title="Referencias Oficiales" icon="external">
+
+- [Array Function](https://docs.microsoft.com/en-us/office/vba/language/reference/user-interface-help/array-function)
+- [ReDim Statement](https://docs.microsoft.com/en-us/office/vba/language/reference/user-interface-help/redim-statement)
+
+</Card>
+
+## Próximo Paso
+
+<Card title="Manejo de Errores" icon="warning">
+Aprende a manejar errores con On Error y crear programas más robustos.
+
+**[Ir a Errores →](/syntax/error-handling/)**
+
+</Card>

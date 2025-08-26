@@ -1,6 +1,229 @@
 ---
-title: On Error, manejo de errores
+title: "On Error, manejo de errores"
+description: "Controla errores y excepciones para hacer tu código VBA más robusto"
 order: 6
 ---
 
-Aún no hay contenido aquí. Pronto habrá ejemplos y explicaciones sobre cómo manejar errores en VBA.
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+} from "@astrojs/starlight/components";
+
+El manejo de errores evita que tu programa se detenga inesperadamente.
+
+## On Error - Tipos Básicos
+
+### On Error GoTo
+
+Redirige a una etiqueta cuando ocurre un error.
+
+<Code
+  code={`Sub ManejoBasico()
+    On Error GoTo ErrorHandler
+    
+    Dim resultado As Double
+    resultado = Range("A1").Value / Range("B1").Value
+    Range("C1").Value = resultado
+    
+    Exit Sub  ' Importante: salir antes del handler
+    
+ErrorHandler:
+    MsgBox "Error: " & Err.Description
+End Sub`}
+  lang="VBA"
+  title="Manejo con GoTo"
+/>
+
+<Aside type="note">
+  **¿Cuándo usar?** Cuando quieres mostrar un mensaje personalizado o hacer
+  limpieza antes de terminar el procedimiento.
+</Aside>
+
+### On Error Resume Next
+
+Ignora el error y continúa con la siguiente línea.
+
+<Code
+  code={`Sub IgnorarErrores()
+    On Error Resume Next
+    
+    ' Procesar celdas, ignorar las que fallan
+    For i = 1 To 10
+        Range("A" & i).Value = Range("B" & i).Value / Range("C" & i).Value
+        
+        If Err.Number <> 0 Then
+            Range("A" & i).Value = "Error"
+            Err.Clear
+        End If
+    Next i
+    
+    On Error GoTo 0  ' Restaurar manejo normal
+End Sub`}
+  lang="VBA"
+  title="Continuar tras errores"
+/>
+
+<Aside type="caution">
+  **¡Cuidado!** Solo usa esto cuando sepas que algunos errores son normales.
+  Puede ocultar problemas importantes si no verificas `Err.Number`.
+</Aside>
+
+## Información del Error
+
+El objeto `Err` contiene detalles sobre el último error que ocurrió.
+
+<Code
+  code={`Sub DetallesError()
+    On Error GoTo ErrorHandler
+    
+    Dim arr(1 To 5) As Integer
+    arr(10) = 1  ' Error: fuera de rango
+    
+    Exit Sub
+    
+ErrorHandler:
+    MsgBox "Número: " & Err.Number & vbCrLf & _
+           "Descripción: " & Err.Description
+    Err.Clear
+End Sub`}
+  lang="VBA"
+  title="Propiedades del objeto Err"
+/>
+
+<Aside type="tip">
+  **Propiedades útiles:** `Err.Number` (código del error), `Err.Description`
+  (mensaje), `Err.Source` (origen del error).
+</Aside>
+
+## Errores Comunes
+
+Conoce los códigos de error más frecuentes para manejarlos mejor.
+
+<Code
+  code={`Sub ErroresFrecuentes()
+    On Error GoTo ErrorHandler
+    
+    ' Diferentes tipos de errores
+    Select Case Range("A1").Value
+        Case 1: Dim arr(5) As Integer: arr(10) = 1     ' Error 9
+        Case 2: Range("B1") = 10 / 0                   ' Error 11
+        Case 3: Dim num As Integer: num = "texto"      ' Error 13
+        Case 4: Dim ws As Worksheet: ws.Name = "test"  ' Error 91
+    End Select
+    
+    Exit Sub
+    
+ErrorHandler:
+    Select Case Err.Number
+        Case 9: MsgBox "Índice fuera de rango"
+        Case 11: MsgBox "División por cero"
+        Case 13: MsgBox "Tipos incompatibles"
+        Case 91: MsgBox "Objeto no inicializado"
+        Case Else: MsgBox "Error: " & Err.Description
+    End Select
+End Sub`}
+  lang="VBA"
+  title="Manejo de errores específicos"
+/>
+
+<Aside type="note">
+  **Errores frecuentes:** 9 (array), 11 (división por cero), 13 (tipos de
+  datos), 91 (objeto vacío), 1004 (Excel).
+</Aside>
+
+## Validación Preventiva
+
+Es mejor prevenir errores que manejarlos. Valida datos antes de procesarlos.
+
+<Code
+  code={`Sub ValidarAntesDeProcesar()
+    Dim archivo As String
+    archivo = "C:\\datos.xlsx"
+    
+    ' Validar antes de procesar
+    If Dir(archivo) = "" Then
+        MsgBox "Archivo no encontrado"
+        Exit Sub
+    End If
+    
+    If Range("A1").Value = "" Then
+        MsgBox "Celda A1 está vacía"
+        Exit Sub
+    End If
+    
+    ' Proceder con confianza
+    Workbooks.Open archivo
+End Sub`}
+  lang="VBA"
+  title="Prevenir errores"
+/>
+
+<Aside type="tip">
+  **Validaciones comunes:** Verificar si archivos existen (`Dir()`), si celdas
+  están vacías, si objetos están inicializados (`Is Nothing`).
+</Aside>
+
+## Ejemplo Práctico
+
+Importador de datos que maneja errores correctamente.
+
+<Code
+  code={`Sub ImportarDatos()
+    Dim archivo As String, wb As Workbook
+    archivo = "C:\\ventas.xlsx"
+    
+    On Error GoTo ErrorHandler
+    
+    ' Validar archivo
+    If Dir(archivo) = "" Then
+        MsgBox "Archivo no existe: " & archivo
+        Exit Sub
+    End If
+    
+    ' Abrir y procesar
+    Set wb = Workbooks.Open(archivo)
+    Range("A1:D100").Copy
+    ThisWorkbook.Sheets("Datos").Range("A1").Paste
+    
+    wb.Close SaveChanges:=False
+    MsgBox "Datos importados correctamente"
+    Exit Sub
+    
+ErrorHandler:
+    MsgBox "Error al importar: " & Err.Description
+    If Not wb Is Nothing Then wb.Close SaveChanges:=False
+End Sub`}
+  lang="VBA"
+  title="Importador con manejo de errores"
+/>
+
+<Aside type="caution">
+  **Importante:** Siempre limpia recursos (cerrar archivos, liberar objetos) en
+  el `ErrorHandler` para evitar problemas de memoria.
+</Aside>
+
+<Aside type="tip">
+  Siempre usa `Exit Sub` antes de tu `ErrorHandler` para evitar que se ejecute
+  cuando no hay errores.
+</Aside>
+
+## Documentación Microsoft
+
+<Card title="Referencias Oficiales" icon="external">
+
+- [On Error Statement](https://learn.microsoft.com/en-us/office/vba/language/reference/user-interface-help/on-error-statement)
+- [Err Object](https://learn.microsoft.com/en-us/office/vba/language/reference/user-interface-help/err-object)
+
+</Card>
+
+## Próximo Paso
+
+<Card title="Objetos de Excel" icon="document">
+Aprende a trabajar con Application, Workbook, Worksheet y Range.
+
+**[Ir a Objetos →](/objects/application/)**
+
+</Card>
