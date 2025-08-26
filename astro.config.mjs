@@ -66,12 +66,13 @@ export default defineConfig({
 
 				// SECCIÓN 3: MODELO DE OBJETOS DE EXCEL
 				{
-					badge: 'En desarrollo',
+					badge: { text: 'En Desarrollo', variant: 'success' },
 					label: 'Modelo de Objetos Excel',
 					collapsed: true,
 					items: [
 						// Objetos principales
 						{
+							badge: { text: 'terminado', variant: 'note' },
 							label: 'Objetos Fundamentales',
 							collapsed: true,
 							items: [
@@ -84,6 +85,7 @@ export default defineConfig({
 						},
 						// Objetos de datos
 						{
+							badge: { text: 'En Desarrollo', variant: 'success' },
 							label: 'Objetos de Datos',
 							collapsed: true,
 							items: [
@@ -95,6 +97,7 @@ export default defineConfig({
 						},
 						// Objetos de interfaz
 						{
+							badge: { text: 'En Desarrollo', variant: 'success' },
 							label: 'Objetos de Interfaz',
 							collapsed: true,
 							items: [
@@ -109,7 +112,7 @@ export default defineConfig({
 
 				// SECCIÓN 4: TÉCNICAS Y PATRONES COMUNES
 				{
-					badge: 'En desarrollo',
+					badge: { text: 'En Fila', variant: 'caution' },
 					label: 'Técnicas Esenciales',
 					collapsed: true,
 					items: [
@@ -125,7 +128,7 @@ export default defineConfig({
 
 				// SECCIÓN 5: EJEMPLOS PRÁCTICOS POR CATEGORÍA
 				{
-					badge: 'En desarrollo',
+					badge: { text: 'En Fila', variant: 'caution' },
 					label: 'Ejemplos Prácticos',
 					collapsed: true,
 					items: [
@@ -169,7 +172,7 @@ export default defineConfig({
 
 				// SECCIÓN 6: MEJORES PRÁCTICAS Y OPTIMIZACIÓN
 				{
-					badge: 'En desarrollo',
+					badge: { text: 'En Fila', variant: 'caution' },
 					label: 'Mejores Prácticas',
 					collapsed: true,
 					items: [
@@ -184,7 +187,7 @@ export default defineConfig({
 
 				// SECCIÓN 7: CASOS DE USO ESPECÍFICOS
 				{
-					badge: 'En desarrollo',
+					badge: { text: 'En Fila', variant: 'caution' },
 					label: 'Casos de Uso',
 					collapsed: true,
 					items: [
@@ -199,7 +202,7 @@ export default defineConfig({
 
 				// SECCIÓN 8: HERRAMIENTAS Y RECURSOS
 				{
-					badge: 'En desarrollo',
+					badge: { text: 'En Fila', variant: 'caution' },
 					label: 'Herramientas y Recursos',
 					collapsed: true,
 					items: [
@@ -214,7 +217,7 @@ export default defineConfig({
 
 				// SECCIÓN 9: REFERENCIA COMPLETA
 				{
-					badge: 'En desarrollo',
+					badge: { text: 'En Fila', variant: 'caution' },
 					label: 'Referencia API',
 					collapsed: true,
 					// Autogenerar desde directorio reference/
@@ -226,7 +229,7 @@ export default defineConfig({
 
 				// SECCIÓN 10: TROUBLESHOOTING Y FAQ
 				{
-					badge: 'En desarrollo',
+					badge: { text: 'En Fila', variant: 'caution' },
 					label: 'Ayuda y Soluciones',
 					collapsed: true,
 					items: [
@@ -240,7 +243,7 @@ export default defineConfig({
 
 				// SECCIÓN 11: APÉNDICES
 				{
-					badge: 'En desarrollo',
+					badge: { text: 'En Fila', variant: 'caution' },
 					label: 'Apéndices',
 					collapsed: true,
 					items: [
