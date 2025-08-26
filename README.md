@@ -39,4 +39,4 @@ npm run preview     # Preview del build
 
 ## Licencia
 
-MIT
+Esta documentación se basa en la documentación oficial de VBA (Visual Basic for Applications) de Microsoft y se distribuye bajo la licencia Creative Commons Attribution 4.0 International (CC BY‑4.0).
