@@ -1,5 +1,346 @@
 ---
-title: Workbook object - abrir/guardar/cerrar
+title: "Workbook Object"
+description: "Abre, guarda, cierra y manipula libros de Excel con VBA"
 order: 2
-
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+} from "@astrojs/starlight/components";
+
+El objeto `Workbook` representa un archivo de Excel. Te permite abrir, guardar, cerrar y manipular libros completos.
+
+## Abrir Libros
+
+### Workbooks.Open
+
+Abre un archivo existente de Excel.
+
+<Code
+  code={`Sub AbrirLibro()
+    Dim wb As Workbook
+    
+    ' Abrir libro específico
+    Set wb = Workbooks.Open("C:\\datos\\ventas.xlsx")
+    
+    ' Abrir solo lectura
+    Set wb = Workbooks.Open("C:\\datos\\plantilla.xlsx", ReadOnly:=True)
+    
+    ' Abrir sin actualizar vínculos
+    Set wb = Workbooks.Open("C:\\datos\\reporte.xlsx", UpdateLinks:=False)
+End Sub`}
+  lang="VBA"
+  title="Abrir archivos Excel"
+/>
+
+<Aside type="tip">
+  **Parámetros útiles:** `ReadOnly:=True` (solo lectura), `UpdateLinks:=False`
+  (sin actualizar vínculos), `Password:="clave"` (archivos protegidos).
+</Aside>
+
+### Workbooks.Add
+
+Crea un nuevo libro vacío.
+
+<Code
+  code={`Sub CrearLibro()
+    Dim nuevoLibro As Workbook
+    
+    ' Crear libro vacío
+    Set nuevoLibro = Workbooks.Add
+    
+    ' Crear desde plantilla
+    Set nuevoLibro = Workbooks.Add("C:\\plantillas\\reporte.xlsx")
+    
+    nuevoLibro.Worksheets(1).Range("A1").Value = "Nuevo libro creado"
+End Sub`}
+  lang="VBA"
+  title="Crear nuevos libros"
+/>
+
+## Guardar Libros
+
+### Save
+
+Guarda el libro con el nombre actual.
+
+<Code
+  code={`Sub GuardarLibro()
+    ' Guardar libro activo
+    ActiveWorkbook.Save
+    
+    ' Guardar libro específico
+    Workbooks("ventas.xlsx").Save
+    
+    ' Verificar si tiene cambios antes de guardar
+    If ActiveWorkbook.Saved = False Then
+        ActiveWorkbook.Save
+        MsgBox "Libro guardado"
+    End If
+End Sub`}
+  lang="VBA"
+  title="Guardar libros existentes"
+/>
+
+### SaveAs
+
+Guarda el libro con un nombre específico o formato diferente.
+
+<Code
+  code={`Sub GuardarComo()
+    Dim ruta As String
+    ruta = "C:\\reportes\\ventas_" & Format(Date, "dd_mm_yyyy")
+    
+    ' Guardar como Excel (.xlsx)
+    ActiveWorkbook.SaveAs ruta & ".xlsx"
+    
+    ' Guardar como CSV
+    ActiveWorkbook.SaveAs ruta & ".csv", FileFormat:=xlCSV
+    
+    ' Guardar como PDF (requiere Excel 2007+)
+    ActiveWorkbook.ExportAsFixedFormat Type:=xlTypePDF, _
+        Filename:=ruta & ".pdf"
+End Sub`}
+  lang="VBA"
+  title="Guardar con nombre específico"
+/>
+
+<Aside type="note">
+  **Formatos comunes:** `xlWorkbookNormal` (xlsx), `xlCSV` (CSV), `xlExcel8`
+  (xls), `xlTemplate` (xltx).
+</Aside>
+
+## Cerrar Libros
+
+### Close
+
+Cierra un libro específico.
+
+<Code
+  code={`Sub CerrarLibros()
+    ' Cerrar sin guardar
+    ActiveWorkbook.Close SaveChanges:=False
+    
+    ' Cerrar guardando cambios
+    Workbooks("datos.xlsx").Close SaveChanges:=True
+    
+    ' Cerrar con confirmación al usuario
+    ActiveWorkbook.Close  ' Pregunta si quiere guardar
+End Sub`}
+  lang="VBA"
+  title="Cerrar libros"
+/>
+
+<Aside type="caution">
+  **Cuidado:** Si no especificas `SaveChanges`, Excel preguntará al usuario. Usa
+  `False` o `True` para automatizar.
+</Aside>
+
+## Propiedades Útiles
+
+### Información del libro
+
+Obtén datos sobre el libro actual.
+
+<Code
+  code={`Sub InformacionLibro()
+    Dim info As String
+    
+    With ActiveWorkbook
+        info = "Nombre: " & .Name & vbCrLf
+        info = info & "Ruta completa: " & .FullName & vbCrLf
+        info = info & "Carpeta: " & .Path & vbCrLf
+        info = info & "Hojas: " & .Worksheets.Count & vbCrLf
+        info = info & "Guardado: " & .Saved & vbCrLf
+        info = info & "Solo lectura: " & .ReadOnly
+    End With
+    
+    MsgBox info
+End Sub`}
+  lang="VBA"
+  title="Propiedades del libro"
+/>
+
+### ThisWorkbook vs ActiveWorkbook
+
+Diferencias importantes entre estos dos objetos.
+
+<Code
+  code={`Sub DiferenciasWorkbook()
+    ' ThisWorkbook = El libro que contiene este código
+    ThisWorkbook.Worksheets(1).Range("A1").Value = "Código aquí"
+    
+    ' ActiveWorkbook = El libro actualmente seleccionado
+    ActiveWorkbook.Worksheets(1).Range("B1").Value = "Libro activo"
+    
+    ' Mostrar diferencia
+    MsgBox "ThisWorkbook: " & ThisWorkbook.Name & vbCrLf & _
+           "ActiveWorkbook: " & ActiveWorkbook.Name
+End Sub`}
+  lang="VBA"
+  title="ThisWorkbook vs ActiveWorkbook"
+/>
+
+<Aside type="tip">
+  **Recomendación:** Usa `ThisWorkbook` cuando quieras asegurar que trabajas con
+  el libro que contiene tu código VBA.
+</Aside>
+
+## Validaciones y Control de Errores
+
+### Verificar si un libro está abierto
+
+Evita errores al intentar trabajar con libros cerrados.
+
+<Code
+  code={`Function LibroAbierto(nombreLibro As String) As Boolean
+    Dim wb As Workbook
+    
+    On Error Resume Next
+    Set wb = Workbooks(nombreLibro)
+    On Error GoTo 0
+    
+    LibroAbierto = Not wb Is Nothing
+End Function
+
+Sub EjemploValidacion()
+If LibroAbierto("ventas.xlsx") Then
+Workbooks("ventas.xlsx").Activate
+MsgBox "Libro ya está abierto"
+Else
+Set wb = Workbooks.Open("C:\\datos\\ventas.xlsx")
+MsgBox "Libro abierto ahora"
+End If
+End Sub`}
+lang="VBA"
+title="Validar libros abiertos"
+/>
+
+### Manejo seguro de archivos
+
+Abre archivos con validación de errores.
+
+<Code
+  code={`Sub AbrirArchivoSeguro()
+    Dim archivo As String
+    Dim wb As Workbook
+    
+    archivo = "C:\\datos\\ventas.xlsx"
+    
+    ' Verificar si el archivo existe
+    If Dir(archivo) = "" Then
+        MsgBox "Archivo no encontrado: " & archivo
+        Exit Sub
+    End If
+    
+    ' Intentar abrir con manejo de errores
+    On Error GoTo ErrorHandler
+    Set wb = Workbooks.Open(archivo)
+    
+    MsgBox "Archivo abierto: " & wb.Name
+    Exit Sub
+    
+ErrorHandler:
+    MsgBox "Error al abrir archivo: " & Err.Description
+End Sub`}
+  lang="VBA"
+  title="Apertura segura de archivos"
+/>
+
+## Ejemplo Práctico
+
+Procesador de múltiples archivos que abre, procesa y guarda libros automáticamente.
+
+<Code
+  code={`Sub ProcesarMultiplesArchivos()
+    Dim carpeta As String, archivo As String
+    Dim wb As Workbook
+    Dim procesados As Integer
+    
+    carpeta = "C:\\datos\\"
+    archivo = Dir(carpeta & "*.xlsx")
+    procesados = 0
+    
+    ' Configurar Application para mejor rendimiento
+    Application.ScreenUpdating = False
+    Application.DisplayAlerts = False
+    
+    Do While archivo <> ""
+        ' Intentar abrir cada archivo
+        On Error Resume Next
+        Set wb = Workbooks.Open(carpeta & archivo)
+        On Error GoTo 0
+        
+        If Not wb Is Nothing Then
+            ' Procesar el archivo
+            Call ProcesarDatos(wb)
+            
+            ' Guardar con nuevo nombre
+            wb.SaveAs carpeta & "procesado_" & archivo
+            wb.Close SaveChanges:=False
+            
+            procesados = procesados + 1
+            Set wb = Nothing
+        End If
+        
+        archivo = Dir()  ' Siguiente archivo
+    Loop
+    
+    ' Restaurar configuración
+    Application.DisplayAlerts = True
+    Application.ScreenUpdating = True
+    
+    MsgBox "Archivos procesados: " & procesados
+End Sub
+
+Sub ProcesarDatos(wb As Workbook)
+' Ejemplo de procesamiento
+With wb.Worksheets(1)
+.Range("A1").Value = "Procesado: " & Now
+.Range("A:A").AutoFit
+End With
+End Sub`}
+lang="VBA"
+title="Procesador de archivos múltiples"
+/>
+
+<Aside type="tip">
+  **Optimización:** Desactiva `ScreenUpdating` y `DisplayAlerts` cuando proceses
+  múltiples archivos para mejor rendimiento.
+</Aside>
+
+<Aside type="caution">
+  **Limpieza:** Siempre usa `Set wb = Nothing` después de cerrar libros para
+  liberar memoria.
+</Aside>
+
+## Métodos Útiles de Workbook
+
+- **`Activate`** - Hace el libro activo
+- **`Protect/Unprotect`** - Protege/desprotege la estructura del libro
+- **`RefreshAll`** - Actualiza todas las conexiones de datos
+- **`UpdateLinks`** - Actualiza vínculos externos
+- **`PrintPreview`** - Muestra vista previa de impresión
+- **`SendMail`** - Envía el libro por email (Outlook requerido)
+
+## Documentación Microsoft
+
+<Card title="Referencias Oficiales" icon="external">
+
+- [Workbook Object](https://learn.microsoft.com/en-us/office/vba/api/excel.workbook)
+- [Workbooks Collection](https://learn.microsoft.com/en-us/office/vba/api/excel.workbooks)
+
+</Card>
+
+## Próximo Paso
+
+<Card title="Worksheet Object" icon="document">
+Aprende a manipular hojas individuales dentro de los libros.
+
+**[Ir a Worksheet →](/objects/worksheet/)**
+
+</Card>

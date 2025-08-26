@@ -1,5 +1,385 @@
 ---
-title: Worksheet object - manipular hojas
+title: "Worksheet Object"
+description: "Manipula hojas de Excel: crear, eliminar, renombrar y organizar"
 order: 3
-
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+} from "@astrojs/starlight/components";
+
+El objeto `Worksheet` representa una hoja individual dentro de un libro de Excel. Te permite crear, eliminar, renombrar y manipular hojas.
+
+## Referenciar Hojas
+
+### Por nombre, índice y objeto
+
+Diferentes formas de acceder a las hojas.
+
+<Code
+  code={`Sub ReferenciarHojas()
+    ' Por nombre
+    Worksheets("Ventas").Range("A1").Value = "Método 1"
+    
+    ' Por índice (primera hoja)
+    Worksheets(1).Range("A1").Value = "Método 2"
+    
+    ' Crear variable objeto
+    Dim hoja As Worksheet
+    Set hoja = Worksheets("Datos")
+    hoja.Range("A1").Value = "Método 3"
+    
+    ' Hoja activa
+    ActiveSheet.Range("A1").Value = "Hoja activa"
+End Sub`}
+  lang="VBA"
+  title="Diferentes formas de referenciar"
+/>
+
+<Aside type="tip">
+  **Recomendación:** Usa nombres en lugar de índices. Los índices cambian si
+  reordenas las hojas.
+</Aside>
+
+## Crear Hojas
+
+### Worksheets.Add
+
+Agrega nuevas hojas al libro.
+
+<Code
+  code={`Sub CrearHojas()
+    Dim nuevaHoja As Worksheet
+    
+    ' Crear hoja simple
+    Set nuevaHoja = Worksheets.Add
+    nuevaHoja.Name = "Reporte_" & Format(Date, "dd_mm_yyyy")
+    
+    ' Crear después de hoja específica
+    Set nuevaHoja = Worksheets.Add(After:=Worksheets("Datos"))
+    nuevaHoja.Name = "Análisis"
+    
+    ' Crear al inicio
+    Set nuevaHoja = Worksheets.Add(Before:=Worksheets(1))
+    nuevaHoja.Name = "Portada"
+    
+    ' Crear múltiples hojas
+    Worksheets.Add Count:=3
+End Sub`}
+  lang="VBA"
+  title="Crear nuevas hojas"
+/>
+
+<Aside type="note">
+  **Posición:** `Before` coloca antes de la hoja especificada, `After` coloca
+  después. Sin especificar, se crea antes de la hoja activa.
+</Aside>
+
+## Eliminar Hojas
+
+### Delete
+
+Elimina hojas del libro.
+
+<Code
+  code={`Sub EliminarHojas()
+    ' Desactivar alertas para evitar confirmación
+    Application.DisplayAlerts = False
+    
+    ' Eliminar por nombre
+    Worksheets("Temporal").Delete
+    
+    ' Eliminar múltiples hojas
+    Dim hojasEliminar As Variant
+    hojasEliminar = Array("Hoja1", "Hoja2", "Hoja3")
+    Worksheets(hojasEliminar).Delete
+    
+    ' Reactivar alertas
+    Application.DisplayAlerts = True
+End Sub`}
+  lang="VBA"
+  title="Eliminar hojas"
+/>
+
+<Aside type="caution">
+  **¡Irreversible!** Eliminar hojas no se puede deshacer. Siempre valida antes
+  de eliminar.
+</Aside>
+
+### Eliminación segura con validación
+
+Verifica antes de eliminar para evitar errores.
+
+<Code
+  code={`Function HojaExiste(nombreHoja As String) As Boolean
+    Dim hoja As Worksheet
+    
+    On Error Resume Next
+    Set hoja = Worksheets(nombreHoja)
+    On Error GoTo 0
+    
+    HojaExiste = Not hoja Is Nothing
+End Function
+
+Sub EliminarHojaSegura()
+Dim nombreHoja As String
+nombreHoja = "Temporal"
+
+    If HojaExiste(nombreHoja) Then
+        Application.DisplayAlerts = False
+        Worksheets(nombreHoja).Delete
+        Application.DisplayAlerts = True
+        MsgBox "Hoja '" & nombreHoja & "' eliminada"
+    Else
+        MsgBox "La hoja '" & nombreHoja & "' no existe"
+    End If
+
+End Sub`}
+lang="VBA"
+title="Eliminación con validación"
+/>
+
+## Propiedades de Hojas
+
+### Name y otras propiedades básicas
+
+Modifica características de las hojas.
+
+<Code
+  code={`Sub PropiedadesHoja()
+    Dim hoja As Worksheet
+    Set hoja = Worksheets("Hoja1")
+    
+    ' Cambiar nombre
+    hoja.Name = "Ventas_2024"
+    
+    ' Ocultar/mostrar hoja
+    hoja.Visible = xlSheetHidden      ' Ocultar
+    hoja.Visible = xlSheetVisible     ' Mostrar
+    hoja.Visible = xlSheetVeryHidden  ' Muy oculta (solo VBA puede mostrar)
+    
+    ' Color de pestaña
+    hoja.Tab.Color = RGB(255, 0, 0)   ' Rojo
+    
+    ' Proteger hoja
+    hoja.Protect Password:="123", UserInterfaceOnly:=True
+End Sub`}
+  lang="VBA"
+  title="Modificar propiedades"
+/>
+
+<Aside type="tip">
+  **Colores útiles:** `RGB(255,0,0)` rojo, `RGB(0,255,0)` verde, `RGB(0,0,255)`
+  azul, `RGB(255,255,0)` amarillo.
+</Aside>
+
+## Copiar y Mover Hojas
+
+### Copy y Move
+
+Duplica o reubica hojas.
+
+<Code
+  code={`Sub CopiarMoverHojas()
+    ' Copiar hoja
+    Worksheets("Plantilla").Copy After:=Worksheets("Datos")
+    ActiveSheet.Name = "Reporte_Enero"
+    
+    ' Copiar a otro libro
+    Worksheets("Resumen").Copy Before:=Workbooks("Otro.xlsx").Worksheets(1)
+    
+    ' Mover hoja
+    Worksheets("Temporal").Move After:=Worksheets(Worksheets.Count)
+    
+    ' Crear copia en el mismo libro
+    Worksheets("Datos").Copy
+    ActiveSheet.Name = "Respaldo_" & Format(Now, "hh_mm_ss")
+End Sub`}
+  lang="VBA"
+  title="Copiar y mover hojas"
+/>
+
+## Organizar Hojas
+
+### Ordenar y reorganizar
+
+Organiza las hojas según criterios específicos.
+
+<Code
+  code={`Sub OrganizarHojas()
+    Dim i As Integer, j As Integer
+    Dim temp As String
+    
+    ' Ordenar hojas alfabéticamente (burbuja simple)
+    For i = 1 To Worksheets.Count - 1
+        For j = i + 1 To Worksheets.Count
+            If Worksheets(i).Name > Worksheets(j).Name Then
+                Worksheets(j).Move Before:=Worksheets(i)
+            End If
+        Next j
+    Next i
+    
+    MsgBox "Hojas ordenadas alfabéticamente"
+End Sub
+
+Sub MoverHojaAlFinal()
+' Mover hoja específica al final
+Worksheets("Resumen").Move After:=Worksheets(Worksheets.Count)
+End Sub
+
+Sub MoverHojaAlInicio()
+' Mover hoja específica al inicio
+Worksheets("Portada").Move Before:=Worksheets(1)
+End Sub`}
+lang="VBA"
+title="Reorganizar hojas"
+/>
+
+## Información de Hojas
+
+### Obtener datos sobre las hojas
+
+Accede a información útil de las hojas.
+
+<Code
+  code={`Sub InformacionHojas()
+    Dim info As String
+    Dim hoja As Worksheet
+    
+    info = "Información de Hojas:" & vbCrLf & vbCrLf
+    
+    For Each hoja In Worksheets
+        info = info & "Nombre: " & hoja.Name & vbCrLf
+        info = info & "Índice: " & hoja.Index & vbCrLf
+        info = info & "Visible: " & (hoja.Visible = xlSheetVisible) & vbCrLf
+        info = info & "Protegida: " & hoja.ProtectContents & vbCrLf
+        info = info & "Usadas: " & hoja.UsedRange.Address & vbCrLf & vbCrLf
+    Next hoja
+    
+    MsgBox info
+End Sub`}
+  lang="VBA"
+  title="Información detallada"
+/>
+
+## Ejemplo Práctico
+
+Sistema completo de gestión de hojas para reportes mensuales.
+
+<Code
+  code={`Sub GestionReportesMensuales()
+    Dim meses As Variant
+    Dim i As Integer
+    Dim nuevaHoja As Worksheet
+    
+    meses = Array("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", _
+                  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre")
+    
+    Application.ScreenUpdating = False
+    
+    ' 1. Limpiar hojas existentes (excepto plantilla)
+    Call EliminarHojasMesuales
+    
+    ' 2. Crear hojas para cada mes
+    For i = 0 To 11
+        Set nuevaHoja = Worksheets.Add(After:=Worksheets(Worksheets.Count))
+        nuevaHoja.Name = meses(i) & "_2024"
+        
+        ' Configurar hoja
+        Call ConfigurarHojaReporte(nuevaHoja, meses(i))
+        
+        ' Color según trimestre
+        Select Case i
+            Case 0 To 2: nuevaHoja.Tab.Color = RGB(173, 216, 230)    ' Azul claro
+            Case 3 To 5: nuevaHoja.Tab.Color = RGB(144, 238, 144)    ' Verde claro
+            Case 6 To 8: nuevaHoja.Tab.Color = RGB(255, 218, 185)    ' Naranja claro
+            Case 9 To 11: nuevaHoja.Tab.Color = RGB(255, 182, 193)   ' Rosa claro
+        End Select
+    Next i
+    
+    ' 3. Crear hoja resumen al final
+    Set nuevaHoja = Worksheets.Add(After:=Worksheets(Worksheets.Count))
+    nuevaHoja.Name = "Resumen_Anual"
+    nuevaHoja.Tab.Color = RGB(255, 215, 0)  ' Dorado
+    
+    Application.ScreenUpdating = True
+    MsgBox "Hojas de reportes mensuales creadas correctamente"
+End Sub
+
+Sub EliminarHojasMesuales()
+Dim hoja As Worksheet
+Application.DisplayAlerts = False
+
+    For Each hoja In Worksheets
+        If hoja.Name Like "*_2024" Or hoja.Name = "Resumen_Anual" Then
+            hoja.Delete
+        End If
+    Next hoja
+
+    Application.DisplayAlerts = True
+
+End Sub
+
+Sub ConfigurarHojaReporte(hoja As Worksheet, mes As String)
+With hoja
+.Range("A1").Value = "Reporte de " & mes & " 2024"
+.Range("A1").Font.Size = 16
+.Range("A1").Font.Bold = True
+
+        .Range("A3").Value = "Fecha"
+        .Range("B3").Value = "Ventas"
+        .Range("C3").Value = "Gastos"
+        .Range("D3").Value = "Utilidad"
+
+        .Range("A3:D3").Font.Bold = True
+        .Range("A3:D3").Interior.Color = RGB(220, 220, 220)
+
+        .Columns("A:D").AutoFit
+    End With
+
+End Sub`}
+lang="VBA"
+title="Gestor de reportes mensuales"
+/>
+
+<Aside type="tip">
+  **Organización:** Usa colores en las pestañas para categorizar hojas
+  visualmente (por trimestre, tipo, estado).
+</Aside>
+
+<Aside type="caution">
+  **Rendimiento:** Desactiva `ScreenUpdating` cuando crees/elimines múltiples
+  hojas para mejor performance.
+</Aside>
+
+## Métodos Útiles de Worksheet
+
+- **`Activate`** - Hace la hoja activa
+- **`Select`** - Selecciona la hoja
+- **`Calculate`** - Recalcula solo esta hoja
+- **`PrintOut`** - Imprime la hoja
+- **`SaveAs`** - Guarda solo esta hoja en archivo separado
+- **`AutoFilterMode`** - Activa/desactiva filtros automáticos
+- **`Paste/PasteSpecial`** - Pega datos con opciones
+
+## Documentación Microsoft
+
+<Card title="Referencias Oficiales" icon="external">
+
+- [Worksheet Object](https://learn.microsoft.com/en-us/office/vba/api/excel.worksheet)
+- [Worksheets Collection](https://learn.microsoft.com/en-us/office/vba/api/excel.worksheets)
+
+</Card>
+
+## Próximo Paso
+
+<Card title="Range Object" icon="document">
+Aprende a manipular celdas y rangos, el objeto más importante de Excel.
+
+**[Ir a Range →](/objects/range/)**
+
+</Card>

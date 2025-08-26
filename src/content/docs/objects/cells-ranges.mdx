@@ -1,5 +1,352 @@
 ---
-title: Cells vs Range, referencias
+title: "Cells vs Range, Referencias"
+description: "Diferencias entre Cells() y Range(), cuándo usar cada uno y métodos de referencia"
 order: 5
-
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+} from "@astrojs/starlight/components";
+
+Entender las diferencias entre `Cells()` y `Range()` es fundamental para escribir código VBA eficiente. Cada método tiene sus ventajas según la situación.
+
+## Diferencias Básicas
+
+### Sintaxis y uso
+
+Comparación directa entre ambos métodos.
+
+<Code
+  code={`Sub DiferenciaBasica()
+    ' Range - Usa referencias de Excel (A1, B2)
+    Range("A1").Value = "Con Range"
+    Range("B2:C3").Interior.Color = RGB(255, 255, 0)
+    
+    ' Cells - Usa números (fila, columna)
+    Cells(1, 1).Value = "Con Cells"  ' A1
+    Cells(2, 2).Value = "Con Cells"  ' B2
+    
+    ' Son equivalentes
+    Range("A1").Value = "Método 1"
+    Cells(1, 1).Value = "Método 2"  ' Mismo resultado
+End Sub`}
+  lang="VBA"
+  title="Range vs Cells"
+/>
+
+### Ventajas de cada método
+
+Cuándo usar Range y cuándo usar Cells.
+
+<Code
+  code={`Sub CuandoUsarCada()
+    ' Range - Mejor para referencias fijas
+    Range("A1:D1").Font.Bold = True        ' Encabezados
+    Range("Total").Value = 1000            ' Nombres definidos
+    
+    ' Cells - Mejor para bucles y posiciones dinámicas
+    Dim i As Integer
+    For i = 1 To 10
+        Cells(i, 1).Value = "Item " & i    ' Posición calculada
+        Cells(i, 2).Value = i * 100        ' Fórmula dinámica
+    Next i
+End Sub`}
+  lang="VBA"
+  title="Cuándo usar cada uno"
+/>
+
+<Aside type="tip">
+  **Regla práctica:** - `Range()` para posiciones fijas conocidas - `Cells()`
+  para posiciones calculadas o bucles
+</Aside>
+
+## Bucles con Cells
+
+### Bucles simples
+
+La ventaja principal de Cells en bucles.
+
+<Code
+  code={`Sub BucleConCells()
+    ' Llenar tabla simple
+    Dim fila As Integer, columna As Integer
+    
+    For fila = 1 To 3
+        For columna = 1 To 3
+            Cells(fila, columna).Value = fila * columna
+        Next columna
+    Next fila
+End Sub`}
+  lang="VBA"
+  title="Bucles con Cells"
+/>
+
+### Trabajar con datos variables
+
+Procesar datos de tamaño que cambia.
+
+<Code
+  code={`Sub ProcesarDatos()
+    Dim ultimaFila As Long, i As Long
+    
+    ' Encontrar última fila
+    ultimaFila = Cells(Rows.Count, 1).End(xlUp).Row
+    
+    ' Procesar cada fila
+    For i = 2 To ultimaFila
+        ' Calcular en columna C
+        Cells(i, 3).Value = Cells(i, 2).Value * 100
+        
+        ' Formato si > 10
+        If Cells(i, 2).Value > 10 Then
+            Cells(i, 1).Font.Bold = True
+        End If
+    Next i
+End Sub`}
+  lang="VBA"
+  title="Datos variables"
+/>
+
+## Combinando Ambos
+
+### Combinar métodos
+
+Usar ambos métodos para mayor flexibilidad.
+
+<Code
+  code={`Sub CombinarMetodos()
+    Dim ultimaFila As Long, ultimaColumna As Long
+    
+    ultimaFila = Cells(Rows.Count, 1).End(xlUp).Row
+    ultimaColumna = Cells(1, Columns.Count).End(xlToLeft).Column
+    
+    ' Crear rango dinámico
+    Dim rangoCompleto As Range
+    Set rangoCompleto = Range(Cells(1, 1), Cells(ultimaFila, ultimaColumna))
+    
+    ' Aplicar bordes
+    rangoCompleto.Borders.LineStyle = xlContinuous
+End Sub`}
+  lang="VBA"
+  title="Combinando métodos"
+/>
+
+<Aside type="note">
+  **Muy útil:** `Range(Cells(1,1), Cells(10,5))` equivale a `Range("A1:E10")`
+  pero es dinámico.
+</Aside>
+
+## Referencias Absolutas y Relativas
+
+### Trabajar con hojas específicas
+
+Especificar la hoja de trabajo.
+
+<Code
+  code={`Sub ReferenciasPorHoja()
+    ' Especificar hoja con Range
+    Worksheets("Datos").Range("A1").Value = "En hoja Datos"
+    
+    ' Especificar hoja con Cells
+    Worksheets("Resumen").Cells(1, 1).Value = "En hoja Resumen"
+    
+    ' Usar variables para hojas
+    Dim hojaActual As Worksheet
+    Set hojaActual = Worksheets("Ventas")
+    
+    hojaActual.Range("A1").Value = "Variable hoja"
+    hojaActual.Cells(2, 1).Value = "También variable"
+End Sub`}
+  lang="VBA"
+  title="Referencias por hoja"
+/>
+
+### Variables para posiciones
+
+Hacer el código más legible y mantenible.
+
+<Code
+  code={`Sub VariablesPosiciones()
+    ' Definir posiciones con variables
+    Dim filaEncabezado As Integer, filaDatos As Integer
+    Dim colNombre As Integer, colPrecio As Integer
+    
+    filaEncabezado = 1
+    filaDatos = 2
+    colNombre = 1
+    colPrecio = 2
+    
+    ' Usar variables (más legible)
+    Cells(filaEncabezado, colNombre).Value = "Producto"
+    Cells(filaEncabezado, colPrecio).Value = "Precio"
+    
+    Cells(filaDatos, colNombre).Value = "Laptop"
+    Cells(filaDatos, colPrecio).Value = 1200
+    
+    ' Formatear encabezados
+    Range(Cells(filaEncabezado, colNombre), Cells(filaEncabezado, colPrecio)).Font.Bold = True
+End Sub`}
+  lang="VBA"
+  title="Variables para posiciones"
+/>
+
+## Offset y Resize
+
+### Moverse relativamente
+
+Navegar desde una celda base.
+
+<Code
+  code={`Sub OffsetResize()
+    Dim celdaBase As Range
+    Set celdaBase = Range("B2")
+    
+    ' Offset - Moverse relativamente
+    celdaBase.Value = "Base"
+    celdaBase.Offset(1, 0).Value = "Abajo"      ' B3
+    celdaBase.Offset(0, 1).Value = "Derecha"    ' C2
+    celdaBase.Offset(-1, -1).Value = "Diagonal" ' A1
+    
+    ' Resize - Cambiar tamaño
+    celdaBase.Resize(3, 2).Interior.Color = RGB(200, 200, 200)
+    
+    ' Combinando offset y resize
+    celdaBase.Offset(5, 0).Resize(1, 5).Value = "Fila completa"
+End Sub`}
+  lang="VBA"
+  title="Offset y Resize"
+/>
+
+## CurrentRegion y UsedRange
+
+### Detectar áreas de datos
+
+Métodos automáticos para encontrar rangos.
+
+<Code
+  code={`Sub DetectarAreas()
+    ' CurrentRegion - Área continua alrededor de celda
+    Dim region As Range
+    Set region = Range("A1").CurrentRegion
+    
+    region.Borders.LineStyle = xlContinuous
+    MsgBox "Región: " & region.Address
+    
+    ' UsedRange - Todo el área usada de la hoja
+    Dim areaUsada As Range
+    Set areaUsada = ActiveSheet.UsedRange
+    
+    MsgBox "Área usada: " & areaUsada.Address
+    
+    ' End - Ir al final de datos
+    Dim ultimaCelda As Range
+    Set ultimaCelda = Range("A1").End(xlDown).End(xlToRight)
+    
+    MsgBox "Última celda con datos: " & ultimaCelda.Address
+End Sub`}
+  lang="VBA"
+  title="Detectar rangos"
+/>
+
+<Aside type="tip">
+  **CurrentRegion** es muy útil para detectar automáticamente tablas de datos
+  sin espacios.
+</Aside>
+
+## Ejemplo Práctico
+
+### Ejemplo simple
+
+Tabla básica usando ambos métodos.
+
+<Code
+  code={`Sub CrearTabla()
+    Dim i As Integer
+    
+    ' Limpiar área
+    Range("A1:D5").Clear
+    
+    ' Encabezados con Range
+    Range("A1").Value = "Producto"
+    Range("B1").Value = "Precio"
+    Range("C1").Value = "Stock"
+    
+    ' Datos con Cells
+    For i = 2 To 4
+        Cells(i, 1).Value = "Producto " & (i - 1)
+        Cells(i, 2).Value = i * 100
+        Cells(i, 3).Value = i * 5
+    Next i
+    
+    ' Formatear encabezados
+    Range("A1:C1").Font.Bold = True
+    Columns("A:C").AutoFit
+End Sub`}
+  lang="VBA"
+  title="Tabla simple"
+/>
+
+## Rendimiento y Buenas Prácticas
+
+### Optimización básica
+
+Consejos para código más eficiente.
+
+<Code
+  code={`Sub BuenasPracticas()
+    ' Lento - Acceso celda por celda
+    Dim i As Integer
+    For i = 1 To 1000
+        Cells(i, 1).Value = i
+    Next i
+    
+    ' Rápido - Usar arrays
+    Dim datos(1 To 1000, 1 To 1) As Variant
+    For i = 1 To 1000
+        datos(i, 1) = i
+    Next i
+    Range("C1:C1000").Value = datos
+    
+    ' Más rápido - Asignar rango completo
+    Range("E1:E1000").Value = Application.Transpose(Array(1, 2, 3, 4, 5))
+End Sub`}
+  lang="VBA"
+  title="Optimización"
+/>
+
+<Aside type="tip">
+  **Consejo:** Para muchos datos, agrúpalos en menos operaciones en lugar de una
+  celda a la vez.
+</Aside>
+
+## Resumen de Diferencias
+
+| Aspecto                | Range("A1")    | Cells(1,1)              |
+| ---------------------- | -------------- | ----------------------- |
+| **Sintaxis**           | Notación Excel | Números (fila, columna) |
+| **Legibilidad**        | Muy clara      | Clara con variables     |
+| **Bucles**             | Complicado     | Ideal                   |
+| **Referencias fijas**  | Perfecto       | Innecesario             |
+| **Cálculos dinámicos** | Difícil        | Natural                 |
+
+## Documentación Microsoft
+
+<Card title="Referencias Oficiales" icon="external">
+
+- [Range Object](<https://learn.microsoft.com/en-us/office/vba/api/excel.range(object)>)
+- [Cells Property](https://learn.microsoft.com/en-us/office/vba/api/excel.worksheet.cells)
+
+</Card>
+
+## Próximo Paso
+
+<Card title="Charts Object" icon="document">
+Aprende a crear y manipular gráficos programáticamente en Excel.
+
+**[Ir a Charts →](/objects/charts/)**
+
+</Card>

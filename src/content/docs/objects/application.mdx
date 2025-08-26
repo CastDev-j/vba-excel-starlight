@@ -1,5 +1,274 @@
 ---
-title: Application object - propiedades/métodos
+title: "Application Object"
+description: "Controla Excel desde VBA con propiedades y métodos del objeto Application"
 order: 1
-
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+} from "@astrojs/starlight/components";
+
+El objeto `Application` representa toda la aplicación de Excel. Te permite controlar configuraciones globales y funcionalidades del programa.
+
+## Propiedades Básicas
+
+### ScreenUpdating
+
+Controla si Excel actualiza la pantalla mientras ejecuta código.
+
+<Code
+  code={`Sub OptimizarRendimiento()
+    ' Desactivar actualización de pantalla
+    Application.ScreenUpdating = False
+    
+    ' Código que modifica muchas celdas
+    For i = 1 To 1000
+        Range("A" & i).Value = i * 2
+    Next i
+    
+    ' Reactivar actualización
+    Application.ScreenUpdating = True
+End Sub`}
+  lang="VBA"
+  title="Mejorar rendimiento"
+/>
+
+<Aside type="tip">
+  **Rendimiento:** Desactivar `ScreenUpdating` acelera dramáticamente el código
+  que modifica muchas celdas.
+</Aside>
+
+### Calculation
+
+Controla cómo Excel calcula las fórmulas.
+
+<Code
+  code={`Sub ControlCalculos()
+    ' Desactivar cálculo automático
+    Application.Calculation = xlCalculationManual
+    
+    ' Realizar cambios sin recalcular
+    Range("A1:A1000").Formula = "=RAND()"
+    
+    ' Calcular manualmente cuando sea necesario
+    Application.Calculate
+    
+    ' Restaurar cálculo automático
+    Application.Calculation = xlCalculationAutomatic
+End Sub`}
+  lang="VBA"
+  title="Controlar cálculos"
+/>
+
+<Aside type="caution">
+  **Importante:** Siempre restaura `xlCalculationAutomatic` al final, o Excel no
+  recalculará automáticamente.
+</Aside>
+
+### DisplayAlerts
+
+Controla si Excel muestra mensajes de confirmación.
+
+<Code
+  code={`Sub SinAlertas()
+    ' Desactivar alertas
+    Application.DisplayAlerts = False
+    
+    ' Guardar sin preguntar por sobreescribir
+    ActiveWorkbook.SaveAs "C:\\archivo.xlsx"
+    
+    ' Eliminar hoja sin confirmación
+    Worksheets("Temporal").Delete
+    
+    ' Reactivar alertas
+    Application.DisplayAlerts = True
+End Sub`}
+  lang="VBA"
+  title="Suprimir confirmaciones"
+/>
+
+<Aside type="note">
+  **¿Cuándo usar?** Cuando automatizas tareas y no quieres que aparezcan
+  diálogos de confirmación.
+</Aside>
+
+## Información del Sistema
+
+### Propiedades del entorno
+
+Obtén información sobre Excel y el sistema.
+
+<Code
+  code={`Sub InformacionSistema()
+    Dim info As String
+
+    info = "Versión Excel: " & Application.Version & vbCrLf
+    info = info & "Usuario: " & Application.UserName & vbCrLf
+    info = info & "Sistema: " & Application.OperatingSystem & vbCrLf
+    info = info & "Ruta Excel: " & Application.Path
+
+    MsgBox info
+End Sub`}
+lang="VBA"
+title="Información del sistema"
+/>
+
+### WorksheetFunction
+
+Accede a funciones de Excel desde VBA.
+
+<Code
+  code={`Sub UsarFuncionesExcel()
+    Dim suma As Double
+    Dim promedio As Double
+    Dim maximo As Double
+    
+    ' Usar funciones de Excel en VBA
+    suma = Application.WorksheetFunction.Sum(Range("A1:A10"))
+    promedio = Application.WorksheetFunction.Average(Range("A1:A10"))
+    maximo = Application.WorksheetFunction.Max(Range("A1:A10"))
+    
+    Range("B1").Value = suma
+    Range("B2").Value = promedio
+    Range("B3").Value = maximo
+End Sub`}
+  lang="VBA"
+  title="Funciones de Excel en VBA"
+/>
+
+<Aside type="tip">
+  **Funciones útiles:** `Sum`, `Average`, `Max`, `Min`, `CountIf`, `VLookup`,
+  `Match`, `Index`.
+</Aside>
+
+## Métodos de Control
+
+### Quit
+
+Cierra Excel completamente.
+
+<Code
+  code={`Sub CerrarExcel()
+    ' Guardar todos los libros abiertos
+    Dim wb As Workbook
+    For Each wb In Workbooks
+        wb.Save
+    Next wb
+    
+    ' Cerrar Excel
+    Application.Quit
+End Sub`}
+  lang="VBA"
+  title="Cerrar Excel"
+/>
+
+### Wait
+
+Pausa la ejecución por un tiempo determinado.
+
+<Code
+  code={`Sub EsperarYContinuar()
+    MsgBox "El proceso iniciará en 5 segundos"
+    
+    ' Esperar 5 segundos
+    Application.Wait Now + TimeValue("00:00:05")
+    
+    MsgBox "¡Proceso iniciado!"
+End Sub`}
+  lang="VBA"
+  title="Pausar ejecución"
+/>
+
+## Ejemplo Práctico
+
+Sistema de procesamiento optimizado que usa varias propiedades de Application.
+
+<Code
+  code={`Sub ProcesarDatosOptimizado()
+    Dim tiempoInicio As Double
+    tiempoInicio = Timer
+    
+    ' Configurar Application para máximo rendimiento
+    With Application
+        .ScreenUpdating = False
+        .Calculation = xlCalculationManual
+        .DisplayAlerts = False
+        .EnableEvents = False
+    End With
+    
+    ' Procesar datos
+    Call LimpiarDatos
+    Call CalcularTotales
+    Call GenerarReporte
+    
+    ' Restaurar configuración normal
+    With Application
+        .EnableEvents = True
+        .DisplayAlerts = True
+        .Calculation = xlCalculationAutomatic
+        .ScreenUpdating = True
+    End With
+    
+    MsgBox "Proceso completado en " & Round(Timer - tiempoInicio, 2) & " segundos"
+End Sub
+
+Sub LimpiarDatos()
+' Limpiar datos duplicados
+Range("A1:D1000").RemoveDuplicates Columns:=1
+End Sub
+
+Sub CalcularTotales()
+' Calcular totales con funciones de Excel
+Range("E1").Value = Application.WorksheetFunction.Sum(Range("D2:D1000"))
+Range("E2").Value = Application.WorksheetFunction.Average(Range("D2:D1000"))
+End Sub
+
+Sub GenerarReporte()
+' Crear reporte en nueva hoja
+Worksheets.Add.Name = "Reporte\_" & Format(Date, "dd_mm_yyyy")
+End Sub`}
+lang="VBA"
+title="Procesamiento optimizado"
+/>
+
+<Aside type="tip">
+  **Optimización:** Combinar `ScreenUpdating = False`, `Calculation = Manual` y
+  `EnableEvents = False` puede acelerar el código hasta 100 veces.
+</Aside>
+
+<Aside type="caution">
+  **Siempre restaura:** Si tu código falla, las configuraciones pueden quedar
+  desactivadas. Usa manejo de errores para restaurarlas.
+</Aside>
+
+## Propiedades Útiles de Application
+
+- **`ActiveCell`** - Celda actualmente seleccionada
+- **`ActiveSheet`** - Hoja activa
+- **`ActiveWorkbook`** - Libro activo
+- **`Selection`** - Rango seleccionado actualmente
+- **`ThisWorkbook`** - El libro que contiene el código VBA
+- **`StatusBar`** - Texto de la barra de estado
+- **`Caption`** - Título de la ventana de Excel
+
+## Documentación Microsoft
+
+<Card title="Referencias Oficiales" icon="external">
+
+- [Application Object](https://learn.microsoft.com/en-us/office/vba/language/reference/user-interface-help/application-defined-or-object-defined-error)
+- [Application Properties](https://learn.microsoft.com/en-us/office/vba/language/reference/user-interface-help/application-defined-or-object-defined-error)
+
+</Card>
+
+## Próximo Paso
+
+<Card title="Workbook Object" icon="document">
+Aprende a abrir, guardar, cerrar y manipular libros de Excel.
+
+**[Ir a Workbook →](/objects/workbook/)**
+
+</Card>

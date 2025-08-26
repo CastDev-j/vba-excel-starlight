@@ -1,5 +1,296 @@
 ---
-title: Range object - el más importante
+title: "Range Object - El Más Importante"
+description: "Domina el objeto Range: seleccionar, leer, escribir y manipular celdas y rangos en Excel"
 order: 4
-
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+} from "@astrojs/starlight/components";
+
+El objeto `Range` es el corazón de VBA para Excel. Representa una celda, un grupo de celdas, filas, columnas o selecciones complejas. Dominar Range es esencial para cualquier automatización en Excel.
+
+## Formas de Referenciar Rangos
+
+### Sintaxis básica
+
+Diferentes métodos para acceder a celdas y rangos.
+
+<Code
+  code={`Sub ReferenciarRangos()
+    ' Una celda específica
+    Range("A1").Value = "Hola"
+    
+    ' Rango de celdas
+    Range("A1:C3").Value = "Datos"
+    
+    ' Usando variables
+    Dim celda As String
+    celda = "B5"
+    Range(celda).Value = "Variable"
+    
+    ' Referencias dinámicas
+    Range("A" & 1).Value = "Fila 1"
+    Range("A" & 2).Value = "Fila 2"
+End Sub`}
+  lang="VBA"
+  title="Referencias básicas"
+/>
+
+### Cells vs Range
+
+Comparación entre los dos métodos principales.
+
+<Code
+  code={`Sub CellsVsRange()
+    ' Método Range - Más intuitivo
+    Range("A1").Value = "Hola"
+    
+    ' Método Cells - Mejor para bucles
+    Cells(1, 1).Value = "Hola"  ' Fila 1, Columna 1
+    
+    ' Bucle sencillo con Cells
+    Dim i As Integer
+    For i = 1 To 5
+        Cells(i, 1).Value = "Fila " & i
+    Next i
+End Sub`}
+  lang="VBA"
+  title="Cells vs Range"
+/>
+
+<Aside type="tip">
+  **Cuándo usar cada uno:** - `Range("A1")` - Referencias fijas - `Cells(1,1)` -
+  Bucles y posiciones dinámicas
+</Aside>
+
+## Leer y Escribir Datos
+
+### Value y Text
+
+Las propiedades más utilizadas.
+
+<Code
+  code={`Sub LeerEscribir()
+    ' Escribir datos
+    Range("A1").Value = 100
+    Range("A2").Value = "Texto"
+    Range("A3").Value = Date
+    
+    ' Leer datos
+    Dim numero As Double
+    Dim texto As String
+    
+    numero = Range("A1").Value
+    texto = Range("A2").Value
+    
+    MsgBox "Número: " & numero & ", Texto: " & texto
+End Sub`}
+  lang="VBA"
+  title="Leer y escribir"
+/>
+
+### Fórmulas
+
+Insertar fórmulas de Excel.
+
+<Code
+  code={`Sub InsertarFormulas()
+    ' Fórmula simple
+    Range("B1").Formula = "=A1*2"
+    
+    ' Fórmula con funciones
+    Range("B2").Formula = "=SUM(A1:A10)"
+    Range("B3").Formula = "=AVERAGE(A1:A10)"
+    
+    ' Verificar resultado
+    MsgBox "Resultado: " & Range("B1").Value
+End Sub`}
+  lang="VBA"
+  title="Trabajar con fórmulas"
+/>
+
+## Formato Básico
+
+### Fuente y colores
+
+Cambiar apariencia de las celdas.
+
+<Code
+  code={`Sub FormateoBasico()
+    ' Formato de fuente
+    With Range("A1")
+        .Value = "Título"
+        .Font.Size = 16
+        .Font.Bold = True
+        .Font.Color = RGB(0, 0, 255)  ' Azul
+    End With
+    
+    ' Color de fondo
+    Range("A2").Interior.Color = RGB(255, 255, 0)  ' Amarillo
+    
+    ' Formato de números
+    Range("B1").Value = 1234.56
+    Range("B1").NumberFormat = "$#,##0.00"
+End Sub`}
+  lang="VBA"
+  title="Formato simple"
+/>
+
+## Copiar y Pegar
+
+### Operaciones básicas
+
+Transferir datos entre rangos.
+
+<Code
+  code={`Sub CopiarPegar()
+    ' Llenar datos de ejemplo
+    Range("A1").Value = "Origen"
+    Range("A2").Value = 123
+    
+    ' Copiar simple
+    Range("A1:A2").Copy
+    Range("C1").PasteSpecial xlPasteAll
+    
+    ' Limpiar portapapeles
+    Application.CutCopyMode = False
+    
+    ' Copiar solo valores
+    Range("A1:A2").Copy
+    Range("E1").PasteSpecial xlPasteValues
+End Sub`}
+  lang="VBA"
+  title="Copiar datos"
+/>
+
+## Buscar Datos
+
+### Find básico
+
+Encontrar valores en rangos.
+
+<Code
+  code={`Sub BuscarDatos()
+    Dim celdaEncontrada As Range
+    
+    ' Preparar datos
+    Range("A1:A5").Value = Array("Manzana", "Pera", "Naranja", "Uva", "Fresa")
+    
+    ' Buscar valor
+    Set celdaEncontrada = Range("A1:A5").Find("Naranja")
+    
+    If Not celdaEncontrada Is Nothing Then
+        celdaEncontrada.Interior.Color = RGB(255, 255, 0)
+        MsgBox "Encontrado en: " & celdaEncontrada.Address
+    Else
+        MsgBox "No encontrado"
+    End If
+End Sub`}
+  lang="VBA"
+  title="Buscar valores"
+/>
+
+## Rangos Dinámicos
+
+### Detectar datos automáticamente
+
+Encuentra los límites reales de los datos.
+
+<Code
+  code={`Sub RangosDinamicos()
+    ' Encontrar última fila con datos
+    Dim ultimaFila As Long
+    ultimaFila = Cells(Rows.Count, "A").End(xlUp).Row
+    
+    ' Crear rango dinámico
+    Dim rangoCompleto As Range
+    Set rangoCompleto = Range("A1:A" & ultimaFila)
+    
+    ' Usar el rango
+    rangoCompleto.Font.Bold = True
+    
+    MsgBox "Procesadas " & ultimaFila & " filas"
+End Sub`}
+  lang="VBA"
+  title="Rango automático"
+/>
+
+<Aside type="tip">
+  **Ranges dinámicos:** Usa `End(xlUp)` para que tu código funcione con
+  cualquier cantidad de datos.
+</Aside>
+
+## Ejemplo Práctico
+
+Crear un reporte simple con formato.
+
+<Code
+  code={`Sub CrearReporte()
+    ' Limpiar área de trabajo
+    Range("A1:D10").Clear
+    
+    ' Crear encabezados
+    Range("A1").Value = "Producto"
+    Range("B1").Value = "Cantidad"
+    Range("C1").Value = "Precio"
+    Range("D1").Value = "Total"
+    
+    ' Formatear encabezados
+    With Range("A1:D1")
+        .Font.Bold = True
+        .Interior.Color = RGB(200, 200, 200)
+    End With
+    
+    ' Agregar datos
+    Range("A2").Value = "Laptop"
+    Range("B2").Value = 5
+    Range("C2").Value = 800
+    Range("D2").Formula = "=B2*C2"
+    
+    Range("A3").Value = "Mouse"
+    Range("B3").Value = 10
+    Range("C3").Value = 25
+    Range("D3").Formula = "=B3*C3"
+    
+    ' Formato de números
+    Range("C2:D3").NumberFormat = "$#,##0.00"
+    
+    ' Ajustar columnas
+    Columns("A:D").AutoFit
+    
+    MsgBox "Reporte creado"
+End Sub`}
+  lang="VBA"
+  title="Reporte completo"
+/>
+
+## Métodos Útiles
+
+- **`.Clear`** - Borrar todo (contenido y formato)
+- **`.ClearContents`** - Borrar solo contenido
+- **`.Select`** - Seleccionar el rango
+- **`.Copy`** - Copiar al portapapeles
+- **`.AutoFit`** - Ajustar tamaño automáticamente
+
+## Documentación Microsoft
+
+<Card title="Referencias Oficiales" icon="external">
+
+- [Range Object](https://learn.microsoft.com/en-us/office/vba/api/excel.range(object))
+- [Range Methods](https://learn.microsoft.com/en-us/office/vba/api/excel.range(object)#methods)
+
+</Card>
+
+## Próximo Paso
+
+<Card title="Cells vs Ranges" icon="document">
+Profundiza en las diferencias entre Cells() y Range(), y cuándo usar cada uno.
+
+**[Ir a Cells vs Ranges →](/objects/cells-ranges/)**
+
+</Card>
