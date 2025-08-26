@@ -1,7 +1,7 @@
 ---
-title: "On Error, manejo de errores"
-description: "Controla errores y excepciones para hacer tu código VBA más robusto"
-order: 6
+title: "If, For, While, Do, Select Case"
+description: "Controla el flujo de tu programa con condiciones y bucles en VBA"
+order: 3
 ---
 
 import {
@@ -12,218 +12,373 @@ import {
   Code,
 } from "@astrojs/starlight/components";
 
-El manejo de errores evita que tu programa se detenga inesperadamente.
+Las estructuras de control permiten que tu programa tome decisiones y repita acciones automáticamente.
 
-## On Error - Tipos Básicos
+## If - Tomar Decisiones
 
-### On Error GoTo
-
-Redirige a una etiqueta cuando ocurre un error.
+### If Básico
 
 <Code
-  code={`Sub ManejoBasico()
-    On Error GoTo ErrorHandler
+  code={`Sub IfBasico()
+    Dim nota As Integer
+    nota = Range("A1").Value
     
-    Dim resultado As Double
-    resultado = Range("A1").Value / Range("B1").Value
-    Range("C1").Value = resultado
+    ' Condición simple
+    If nota >= 70 Then
+        Range("B1").Value = "Aprobado"
+    End If
     
-    Exit Sub  ' Importante: salir antes del handler
-    
-ErrorHandler:
-    MsgBox "Error: " & Err.Description
+    ' Con Else
+    If nota >= 70 Then
+        Range("C1").Value = "Aprobado"
+    Else
+        Range("C1").Value = "Reprobado"
+    End If
 End Sub`}
   lang="VBA"
-  title="Manejo con GoTo"
+  title="If simple y con Else"
 />
 
-<Aside type="note">
-  **¿Cuándo usar?** Cuando quieres mostrar un mensaje personalizado o hacer
-  limpieza antes de terminar el procedimiento.
-</Aside>
-
-### On Error Resume Next
-
-Ignora el error y continúa con la siguiente línea.
+### If con Múltiples Condiciones
 
 <Code
-  code={`Sub IgnorarErrores()
-    On Error Resume Next
+  code={`Sub IfMultiple()
+    Dim calificacion As Integer
+    calificacion = Range("A1").Value
     
-    ' Procesar celdas, ignorar las que fallan
+    If calificacion >= 90 Then
+        Range("B1").Value = "A - Excelente"
+    ElseIf calificacion >= 80 Then
+        Range("B1").Value = "B - Muy Bueno"
+    ElseIf calificacion >= 70 Then
+        Range("B1").Value = "C - Bueno"
+    ElseIf calificacion >= 60 Then
+        Range("B1").Value = "D - Suficiente"
+    Else
+        Range("B1").Value = "F - Insuficiente"
+    End If
+End Sub`}
+  lang="VBA"
+  title="If con ElseIf"
+/>
+
+## For - Repetir Acciones
+
+### For Básico
+
+<Code
+  code={`Sub ForBasico()
+    Dim i As Integer
+    
+    ' Contar del 1 al 10
     For i = 1 To 10
-        Range("A" & i).Value = Range("B" & i).Value / Range("C" & i).Value
-        
-        If Err.Number <> 0 Then
-            Range("A" & i).Value = "Error"
-            Err.Clear
-        End If
+        Range("A" & i).Value = "Fila " & i
     Next i
     
-    On Error GoTo 0  ' Restaurar manejo normal
+    ' Con incremento personalizado
+    For i = 2 To 20 Step 2  ' Solo pares
+        Range("B" & i).Value = i
+    Next i
+    
+    ' Countdown
+    For i = 10 To 1 Step -1
+        Range("C" & i).Value = "Quedan " & i
+    Next i
 End Sub`}
   lang="VBA"
-  title="Continuar tras errores"
+  title="Bucles For"
 />
 
-<Aside type="caution">
-  **¡Cuidado!** Solo usa esto cuando sepas que algunos errores son normales.
-  Puede ocultar problemas importantes si no verificas `Err.Number`.
-</Aside>
-
-## Información del Error
-
-El objeto `Err` contiene detalles sobre el último error que ocurrió.
+### For Each - Iterar Colecciones
 
 <Code
-  code={`Sub DetallesError()
-    On Error GoTo ErrorHandler
+  code={`Sub ForEach()
+    Dim celda As Range
+    Dim hoja As Worksheet
     
-    Dim arr(1 To 5) As Integer
-    arr(10) = 1  ' Error: fuera de rango
+    ' Iterar rango de celdas
+    For Each celda In Range("A1:A10")
+        If celda.Value > 100 Then
+            celda.Interior.Color = RGB(255, 0, 0)  ' Rojo
+        End If
+    Next celda
     
-    Exit Sub
-    
-ErrorHandler:
-    MsgBox "Número: " & Err.Number & vbCrLf & _
-           "Descripción: " & Err.Description
-    Err.Clear
+    ' Iterar hojas del workbook
+    For Each hoja In ThisWorkbook.Worksheets
+        hoja.Range("A1").Value = "Procesada: " & Now
+    Next hoja
 End Sub`}
   lang="VBA"
-  title="Propiedades del objeto Err"
+  title="For Each para colecciones"
 />
 
-<Aside type="tip">
-  **Propiedades útiles:** `Err.Number` (código del error), `Err.Description`
-  (mensaje), `Err.Source` (origen del error).
-</Aside>
+## While y Do - Bucles Condicionales
 
-## Errores Comunes
-
-Conoce los códigos de error más frecuentes para manejarlos mejor.
+### Do While
 
 <Code
-  code={`Sub ErroresFrecuentes()
-    On Error GoTo ErrorHandler
+  code={`Sub DoWhile()
+    Dim fila As Integer
+    fila = 1
     
-    ' Diferentes tipos de errores
-    Select Case Range("A1").Value
-        Case 1: Dim arr(5) As Integer: arr(10) = 1     ' Error 9
-        Case 2: Range("B1") = 10 / 0                   ' Error 11
-        Case 3: Dim num As Integer: num = "texto"      ' Error 13
-        Case 4: Dim ws As Worksheet: ws.Name = "test"  ' Error 91
+    ' Ejecutar mientras la condición sea verdadera
+    Do While Range("A" & fila).Value <> ""
+        Range("B" & fila).Value = "Procesado"
+        fila = fila + 1
+        
+        ' Seguridad para evitar bucle infinito
+        If fila > 1000 Then Exit Do
+    Loop
+    
+    Range("C1").Value = "Filas procesadas: " & (fila - 1)
+End Sub`}
+  lang="VBA"
+  title="Do While"
+/>
+
+### Do Until
+
+<Code
+  code={`Sub DoUntil()
+    Dim suma As Double
+    Dim fila As Integer
+    fila = 1
+    
+    ' Ejecutar hasta que la condición sea verdadera
+    Do Until suma > 1000
+        suma = suma + Range("A" & fila).Value
+        fila = fila + 1
+        
+        ' Salir si no hay más datos
+        If Range("A" & fila).Value = "" Then Exit Do
+    Loop
+    
+    Range("B1").Value = "Suma total: " & suma
+End Sub`}
+  lang="VBA"
+  title="Do Until"
+/>
+
+## Select Case - Múltiples Opciones
+
+<Code
+  code={`Sub SelectCase()
+    Dim categoria As String
+    Dim descuento As Double
+    
+    categoria = Range("A1").Value
+    
+    Select Case UCase(categoria)
+        Case "VIP"
+            descuento = 0.2     ' 20%
+        Case "PREMIUM"
+            descuento = 0.15    ' 15%
+        Case "REGULAR"
+            descuento = 0.05    ' 5%
+        Case "NUEVO"
+            descuento = 0.1     ' 10%
+        Case Else
+            descuento = 0       ' Sin descuento
     End Select
     
-    Exit Sub
+    Range("B1").Value = "Descuento: " & (descuento * 100) & "%"
+End Sub`}
+  lang="VBA"
+  title="Select Case básico"
+/>
+
+### Select Case Avanzado
+
+<Code
+  code={`Sub SelectCaseAvanzado()
+    Dim puntuacion As Integer
+    Dim mensaje As String
     
-ErrorHandler:
-    Select Case Err.Number
-        Case 9: MsgBox "Índice fuera de rango"
-        Case 11: MsgBox "División por cero"
-        Case 13: MsgBox "Tipos incompatibles"
-        Case 91: MsgBox "Objeto no inicializado"
-        Case Else: MsgBox "Error: " & Err.Description
+    puntuacion = Range("A1").Value
+    
+    Select Case puntuacion
+        Case Is >= 90
+            mensaje = "Sobresaliente"
+        Case 80 To 89
+            mensaje = "Notable"
+        Case 70 To 79
+            mensaje = "Bien"
+        Case 60 To 69
+            mensaje = "Suficiente"
+        Case Is < 60
+            mensaje = "Insuficiente"
+        Case Else
+            mensaje = "Valor no válido"
     End Select
+    
+    Range("B1").Value = mensaje
 End Sub`}
   lang="VBA"
-  title="Manejo de errores específicos"
+  title="Select Case con rangos"
 />
 
-<Aside type="note">
-  **Errores frecuentes:** 9 (array), 11 (división por cero), 13 (tipos de
-  datos), 91 (objeto vacío), 1004 (Excel).
-</Aside>
-
-## Validación Preventiva
-
-Es mejor prevenir errores que manejarlos. Valida datos antes de procesarlos.
+## Exit y Break
 
 <Code
-  code={`Sub ValidarAntesDeProcesar()
-    Dim archivo As String
-    archivo = "C:\\datos.xlsx"
+  code={`Sub ControlFlujo()
+    Dim i As Integer
     
-    ' Validar antes de procesar
-    If Dir(archivo) = "" Then
-        MsgBox "Archivo no encontrado"
-        Exit Sub
+    ' Exit For - Salir del bucle
+    For i = 1 To 100
+        If Range("A" & i).Value = "STOP" Then
+            Exit For  ' Salir inmediatamente
+        End If
+        Range("B" & i).Value = "Procesado"
+    Next i
+    
+    ' Exit Sub - Salir del procedimiento
+    If Range("C1").Value = "" Then
+        MsgBox "No hay datos para procesar"
+        Exit Sub  ' Terminar el procedimiento aquí
     End If
     
-    If Range("A1").Value = "" Then
-        MsgBox "Celda A1 está vacía"
-        Exit Sub
-    End If
-    
-    ' Proceder con confianza
-    Workbooks.Open archivo
+    ' Resto del código...
 End Sub`}
   lang="VBA"
-  title="Prevenir errores"
+  title="Salir de bucles y procedimientos"
+/>
+
+## Ejemplo Práctico Completo
+
+Procesador de ventas con múltiples estructuras:
+
+<Code
+  code={`Sub ProcesadorVentas()
+    Dim fila As Integer, ultimaFila As Integer
+    Dim total As Double, ventaActual As Double
+    Dim vendedor As String, region As String
+    Dim bonificacion As Double, categoria As String
+    
+    ' Encontrar última fila con datos
+    ultimaFila = Cells(Rows.Count, "A").End(xlUp).Row
+    
+    ' Validar que hay datos
+    If ultimaFila < 2 Then
+        MsgBox "No hay datos para procesar"
+        Exit Sub
+    End If
+    
+    ' Procesar cada fila de ventas
+    For fila = 2 To ultimaFila
+        vendedor = Range("A" & fila).Value
+        ventaActual = Range("B" & fila).Value
+        region = Range("C" & fila).Value
+        
+        ' Saltar si no hay vendedor
+        If vendedor = "" Then
+            Range("E" & fila).Value = "ERROR: Sin vendedor"
+            GoTo SiguienteFila
+        End If
+        
+        ' Calcular bonificación por región
+        Select Case UCase(region)
+            Case "NORTE"
+                bonificacion = ventaActual * 0.08
+            Case "SUR"
+                bonificacion = ventaActual * 0.06
+            Case "CENTRO"
+                bonificacion = ventaActual * 0.07
+            Case Else
+                bonificacion = ventaActual * 0.05
+        End Select
+        
+        ' Categorizar vendedor por performance
+        If ventaActual >= 50000 Then
+            categoria = "ESTRELLA"
+            bonificacion = bonificacion * 1.5  ' Bonus extra
+        ElseIf ventaActual >= 30000 Then
+            categoria = "SENIOR"
+            bonificacion = bonificacion * 1.2
+        ElseIf ventaActual >= 15000 Then
+            categoria = "JUNIOR"
+        Else
+            categoria = "NUEVO"
+            bonificacion = bonificacion * 0.8  ' Reducir bonificación
+        End If
+        
+        ' Escribir resultados
+        Range("D" & fila).Value = bonificacion
+        Range("E" & fila).Value = categoria
+        
+        total = total + ventaActual
+        
+SiguienteFila:
+    Next fila
+    
+    ' Resumen final
+    Range("F1").Value = "Total procesado: $" & total
+    Range("F2").Value = "Filas procesadas: " & (ultimaFila - 1)
+    Range("F3").Value = "Fecha: " & Now
+    
+    MsgBox "Procesamiento completado. Total: $" & total
+End Sub`}
+  lang="VBA"
+  title="Ejemplo completo - Procesador de ventas"
+/>
+
+## Estructuras Anidadas
+
+<Code
+  code={`Sub EstructurasAnidadas()
+    Dim departamento As String, antiguedad As Integer
+    Dim salario As Double, aumento As Double
+    
+    departamento = Range("A1").Value
+    antiguedad = Range("B1").Value
+    salario = Range("C1").Value
+    
+    ' If anidado dentro de Select Case
+    Select Case UCase(departamento)
+        Case "VENTAS"
+            If antiguedad >= 5 Then
+                aumento = salario * 0.15
+            ElseIf antiguedad >= 2 Then
+                aumento = salario * 0.10
+            Else
+                aumento = salario * 0.05
+            End If
+            
+        Case "SISTEMAS"
+            If salario < 25000 Then
+                aumento = salario * 0.20  ' Ajuste salarial
+            Else
+                aumento = salario * 0.12
+            End If
+            
+        Case Else
+            aumento = salario * 0.08  ' Aumento estándar
+    End Select
+    
+    Range("D1").Value = aumento
+End Sub`}
+  lang="VBA"
+  title="Estructuras anidadas"
 />
 
 <Aside type="tip">
-  **Validaciones comunes:** Verificar si archivos existen (`Dir()`), si celdas
-  están vacías, si objetos están inicializados (`Is Nothing`).
-</Aside>
-
-## Ejemplo Práctico
-
-Importador de datos que maneja errores correctamente.
-
-<Code
-  code={`Sub ImportarDatos()
-    Dim archivo As String, wb As Workbook
-    archivo = "C:\\ventas.xlsx"
-    
-    On Error GoTo ErrorHandler
-    
-    ' Validar archivo
-    If Dir(archivo) = "" Then
-        MsgBox "Archivo no existe: " & archivo
-        Exit Sub
-    End If
-    
-    ' Abrir y procesar
-    Set wb = Workbooks.Open(archivo)
-    Range("A1:D100").Copy
-    ThisWorkbook.Sheets("Datos").Range("A1").Paste
-    
-    wb.Close SaveChanges:=False
-    MsgBox "Datos importados correctamente"
-    Exit Sub
-    
-ErrorHandler:
-    MsgBox "Error al importar: " & Err.Description
-    If Not wb Is Nothing Then wb.Close SaveChanges:=False
-End Sub`}
-  lang="VBA"
-  title="Importador con manejo de errores"
-/>
-
-<Aside type="caution">
-  **Importante:** Siempre limpia recursos (cerrar archivos, liberar objetos) en
-  el `ErrorHandler` para evitar problemas de memoria.
-</Aside>
-
-<Aside type="tip">
-  Siempre usa `Exit Sub` antes de tu `ErrorHandler` para evitar que se ejecute
-  cuando no hay errores.
+  Usa sangrías (indentación) consistentes para hacer el código más legible
+  cuando aniudes estructuras.
 </Aside>
 
 ## Documentación Microsoft
 
 <Card title="Referencias Oficiales" icon="external">
 
-- [On Error Statement](https://learn.microsoft.com/en-us/office/vba/language/reference/user-interface-help/on-error-statement)
-- [Err Object](https://learn.microsoft.com/en-us/office/vba/language/reference/user-interface-help/err-object)
+- [Control Structures](https://learn.microsoft.com/en-us/office/vba/language/concepts/getting-started/using-ifthenelse-statements)
+- [For...Next Statement](https://learn.microsoft.com/en-us/office/vba/language/reference/user-interface-help/fornext-statement)
 
 </Card>
 
 ## Próximo Paso
 
-<Card title="Objetos de Excel" icon="document">
-Aprende a trabajar con Application, Workbook, Worksheet y Range.
+<Card title="Procedimientos y Funciones" icon="document">
+Aprende a crear Sub y Function para organizar mejor tu código.
 
-**[Ir a Objetos →](/objects/application/)**
+**[Ir a Procedimientos →](/syntax/procedures-functions/)**
 
 </Card>
