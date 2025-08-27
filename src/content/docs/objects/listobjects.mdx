@@ -1,5 +1,360 @@
 ---
-title: ListObjects - tablas de Excel
+title: "ListObjects - Tablas de Excel"
+description: "Crear y manipular tablas estructuradas de Excel programáticamente"
 order: 8
-
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+} from "@astrojs/starlight/components";
+
+Los ListObjects permiten trabajar con tablas estructuradas de Excel, ofreciendo funcionalidades avanzadas como filtros automáticos, formato consistente y referencias estructuradas.
+
+## Crear Tabla
+
+### Primera tabla estructurada
+
+<Code
+  code={`Sub CrearTabla()
+    ' Datos de ejemplo
+    Range("A1:D4").Value = Array( _
+        Array("ID", "Nombre", "Departamento", "Salario"), _
+        Array(1, "Ana García", "Ventas", 45000), _
+        Array(2, "Juan Pérez", "IT", 52000), _
+        Array(3, "Luis Martín", "Marketing", 48000))
+    
+    ' Crear tabla
+    Dim tabla As ListObject
+    Set tabla = ActiveSheet.ListObjects.Add( _
+        xlSrcRange, Range("A1:D4"), , xlYes)
+    
+    ' Nombrar la tabla
+    tabla.Name = "TablaEmpleados"
+End Sub`}
+  lang="VBA"
+  title="Crear tabla básica"
+/>
+
+### Tabla con estilo
+
+<Code
+  code={`Sub TablaConEstilo()
+    ' Crear datos
+    Range("A1:C5").Value = Array( _
+        Array("Producto", "Precio", "Stock"), _
+        Array("Laptop", 1200, 15), _
+        Array("Mouse", 25, 50), _
+        Array("Teclado", 75, 30), _
+        Array("Monitor", 300, 20))
+    
+    ' Crear tabla con estilo
+    Dim tabla As ListObject
+    Set tabla = ActiveSheet.ListObjects.Add(xlSrcRange, Range("A1:C5"), , xlYes)
+    
+    With tabla
+        .Name = "TablaProductos"
+        .TableStyle = "TableStyleMedium2"
+        .ShowTotals = True
+        .ListColumns("Stock").TotalsCalculation = xlTotalsCalculationSum
+    End With
+End Sub`}
+  lang="VBA"
+  title="Tabla con formato"
+/>
+
+<Aside type="tip">
+  Usar `xlYes` en el tercer parámetro indica que la primera fila contiene
+  encabezados.
+</Aside>
+
+## Agregar Datos
+
+### Insertar filas
+
+<Code
+  code={`Sub AgregarFila()
+    Dim tabla As ListObject
+    Set tabla = ActiveSheet.ListObjects("TablaEmpleados")
+    
+    ' Agregar nueva fila
+    Dim nuevaFila As ListRow
+    Set nuevaFila = tabla.ListRows.Add
+    
+    With nuevaFila
+        .Range(1, 1).Value = 4
+        .Range(1, 2).Value = "María López"
+        .Range(1, 3).Value = "Finanzas"
+        .Range(1, 4).Value = 55000
+    End With
+End Sub`}
+  lang="VBA"
+  title="Insertar fila"
+/>
+
+### Agregar múltiples filas
+
+<Code
+  code={`Sub AgregarVariasFilas()
+    Dim tabla As ListObject
+    Set tabla = ActiveSheet.ListObjects("TablaProductos")
+    
+    ' Datos para agregar
+    Dim nuevosProductos As Variant
+    nuevosProductos = Array( _
+        Array("Tablet", 450, 12), _
+        Array("Auriculares", 80, 25))
+    
+    Dim i As Integer
+    For i = 0 To UBound(nuevosProductos)
+        With tabla.ListRows.Add
+            .Range(1, 1).Value = nuevosProductos(i)(0)
+            .Range(1, 2).Value = nuevosProductos(i)(1)
+            .Range(1, 3).Value = nuevosProductos(i)(2)
+        End With
+    Next i
+End Sub`}
+  lang="VBA"
+  title="Múltiples filas"
+/>
+
+## Leer y Filtrar Datos
+
+### Acceder a datos
+
+<Code
+  code={`Sub LeerDatosTabla()
+    Dim tabla As ListObject
+    Set tabla = ActiveSheet.ListObjects("TablaEmpleados")
+    
+    Dim i As Integer
+    ' Leer cada fila de datos (sin encabezados)
+    For i = 1 To tabla.ListRows.Count
+        With tabla.ListRows(i)
+            Debug.Print .Range(1, 2).Value & " - " & .Range(1, 3).Value
+        End With
+    Next i
+    
+    MsgBox "Datos enviados a ventana Inmediato"
+End Sub`}
+  lang="VBA"
+  title="Leer datos"
+/>
+
+### Aplicar filtros
+
+<Code
+  code={`Sub FiltrarTabla()
+    Dim tabla As ListObject
+    Set tabla = ActiveSheet.ListObjects("TablaEmpleados")
+    
+    ' Activar filtro automático
+    tabla.ShowAutoFilter = True
+    
+    ' Filtrar por departamento IT
+    tabla.Range.AutoFilter Field:=3, Criteria1:="IT"
+    
+    MsgBox "Filtro aplicado: solo IT"
+End Sub`}
+  lang="VBA"
+  title="Filtrar datos"
+/>
+
+<Aside type="note">
+  Los filtros en ListObjects usan la misma sintaxis que AutoFilter normal de
+  Excel.
+</Aside>
+
+## Modificar Estructura
+
+### Agregar columna
+
+<Code
+  code={`Sub AgregarColumna()
+    Dim tabla As ListObject
+    Set tabla = ActiveSheet.ListObjects("TablaEmpleados")
+    
+    ' Agregar nueva columna al final
+    Dim nuevaColumna As ListColumn
+    Set nuevaColumna = tabla.ListColumns.Add
+    nuevaColumna.Name = "Email"
+    
+    ' Llenar con datos de ejemplo
+    tabla.ListColumns("Email").DataBodyRange.Value = Array( _
+        "ana@empresa.com", _
+        "juan@empresa.com", _
+        "luis@empresa.com", _
+        "maria@empresa.com")
+End Sub`}
+  lang="VBA"
+  title="Agregar columna"
+/>
+
+### Redimensionar tabla
+
+<Code
+  code={`Sub RedimensionarTabla()
+    Dim tabla As ListObject
+    Set tabla = ActiveSheet.ListObjects("TablaProductos")
+    
+    ' Expandir tabla para incluir más filas
+    Dim nuevoRango As Range
+    Set nuevoRango = Range("A1:C10")
+    
+    tabla.Resize nuevoRango
+    MsgBox "Tabla redimensionada"
+End Sub`}
+  lang="VBA"
+  title="Redimensionar"
+/>
+
+## Referencias Estructuradas
+
+### Usar nombres de columnas
+
+<Code
+  code={`Sub ReferenciaEstructurada()
+    Dim tabla As ListObject
+    Set tabla = ActiveSheet.ListObjects("TablaEmpleados")
+    
+    ' Calcular promedio de salarios usando referencia estructurada
+    Dim promedioSalario As Double
+    promedioSalario = Application.Average(tabla.ListColumns("Salario").DataBodyRange)
+    
+    MsgBox "Promedio de salarios: $" & Format(promedioSalario, "#,##0")
+    
+    ' Encontrar salario máximo
+    Dim salarioMax As Double
+    salarioMax = Application.Max(tabla.ListColumns("Salario").DataBodyRange)
+    
+    MsgBox "Salario máximo: $" & Format(salarioMax, "#,##0")
+End Sub`}
+  lang="VBA"
+  title="Referencias por nombre"
+/>
+
+## Formato y Totales
+
+### Configurar totales
+
+<Code
+  code={`Sub ConfigurarTotales()
+    Dim tabla As ListObject
+    Set tabla = ActiveSheet.ListObjects("TablaProductos")
+    
+    ' Mostrar fila de totales
+    tabla.ShowTotals = True
+    
+    With tabla
+        ' Suma en columna Stock
+        .ListColumns("Stock").TotalsCalculation = xlTotalsCalculationSum
+        
+        ' Promedio en columna Precio
+        .ListColumns("Precio").TotalsCalculation = xlTotalsCalculationAverage
+        
+        ' Contar productos
+        .ListColumns("Producto").TotalsCalculation = xlTotalsCalculationCount
+    End With
+End Sub`}
+  lang="VBA"
+  title="Configurar totales"
+/>
+
+### Aplicar formato
+
+<Code
+  code={`Sub FormatearTabla()
+    Dim tabla As ListObject
+    Set tabla = ActiveSheet.ListObjects("TablaEmpleados")
+    
+    With tabla
+        ' Cambiar estilo
+        .TableStyle = "TableStyleLight9"
+        
+        ' Formato de columna Salario
+        .ListColumns("Salario").DataBodyRange.NumberFormat = "$#,##0"
+        
+        ' Ajustar ancho de columnas
+        .Range.Columns.AutoFit
+    End With
+End Sub`}
+  lang="VBA"
+  title="Aplicar formato"
+/>
+
+## Ejemplo Práctico
+
+Sistema de inventario simple:
+
+<Code
+  code={`Sub SistemaInventario()
+    ' Limpiar y crear datos base
+    Cells.Clear
+    Range("A1:E1").Value = Array("Código", "Producto", "Precio", "Stock", "Total")
+    
+    Dim productos As Variant
+    productos = Array( _
+        Array("P001", "Laptop Dell", 1200, 10), _
+        Array("P002", "Mouse Logitech", 35, 50), _
+        Array("P003", "Teclado Mecánico", 120, 25), _
+        Array("P004", "Monitor 24''", 280, 15))
+    
+    Range("A2:D5").Value = productos
+    
+    ' Crear tabla de inventario
+    Dim inventario As ListObject
+    Set inventario = ActiveSheet.ListObjects.Add(xlSrcRange, Range("A1:E5"), , xlYes)
+    
+    With inventario
+        .Name = "Inventario"
+        .TableStyle = "TableStyleMedium6"
+        .ShowTotals = True
+        
+        ' Calcular total por producto (Precio * Stock)
+        .ListColumns("Total").DataBodyRange.Formula = "=[@Precio]*[@Stock]"
+        .ListColumns("Total").TotalsCalculation = xlTotalsCalculationSum
+        
+        ' Formato
+        .ListColumns("Precio").DataBodyRange.NumberFormat = "$#,##0"
+        .ListColumns("Total").DataBodyRange.NumberFormat = "$#,##0"
+        .Range.Columns.AutoFit
+    End With
+    
+    ' Título
+    Range("A1").Offset(-1, 0).Value = "SISTEMA DE INVENTARIO"
+    Range("A1").Offset(-1, 0).Font.Bold = True
+    Range("A1").Offset(-1, 0).Font.Size = 14
+    
+    MsgBox "Sistema de inventario creado"
+End Sub`}
+  lang="VBA"
+  title="Inventario completo"
+/>
+
+## Propiedades Principales
+
+- **`ListRows`** - Filas de datos
+- **`ListColumns`** - Columnas de la tabla
+- **`DataBodyRange`** - Solo datos (sin encabezados)
+- **`HeaderRowRange`** - Solo encabezados
+- **`ShowTotals`** - Mostrar fila de totales
+- **`TableStyle`** - Estilo visual
+
+## Referencias
+
+<Card title="Documentación Microsoft" icon="external">
+  [ListObject Object
+  Reference](https://learn.microsoft.com/en-us/office/vba/api/excel.listobject)
+</Card>
+
+## Siguiente
+
+<CardGrid>
+  <Card title="Names Objects" icon="list-format">
+    Trabajar con rangos nombrados y referencias **[Ver Names
+    →](/objects/names/)**
+  </Card>
+</CardGrid>

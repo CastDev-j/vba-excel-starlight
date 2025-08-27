@@ -85,7 +85,7 @@ export default defineConfig({
 						},
 						// Objetos de datos
 						{
-							badge: { text: 'En Desarrollo', variant: 'success' },
+							badge: { text: 'terminado', variant: 'note' },
 							label: 'Objetos de Datos',
 							collapsed: true,
 							items: [

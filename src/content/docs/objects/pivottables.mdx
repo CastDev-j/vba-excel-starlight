@@ -1,5 +1,235 @@
 ---
-title: PivotTable objects - tablas dinámicas
+title: "PivotTables - Tablas Dinámicas"
+description: "Crear y automatizar tablas dinámicas programáticamente"
 order: 7
-
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+} from "@astrojs/starlight/components";
+
+Las tablas dinámicas automatizan el análisis de datos y crean reportes interactivos desde código VBA.
+
+## Crear Tabla Dinámica
+
+### Primera tabla dinámica
+
+<Code
+  code={`Sub CrearTablaDinamica()
+    ' Datos de ejemplo
+    Range("A1:C4").Value = Array( _
+        Array("Producto", "Vendedor", "Ventas"), _
+        Array("Laptop", "Juan", 1500), _
+        Array("Mouse", "Ana", 25), _
+        Array("Teclado", "Luis", 75))
+    
+    ' Crear tabla dinámica
+    Dim pt As PivotTable
+    Set pt = ActiveSheet.PivotTables.Add( _
+        PivotCache:=ActiveWorkbook.PivotCaches.Create( _
+            xlDatabase, Range("A1:C4")), _
+        TableDestination:=Range("E1"))
+End Sub`}
+  lang="VBA"
+  title="Tabla básica"
+/>
+
+### Configurar campos
+
+<Code
+  code={`Sub ConfigurarCampos()
+    Dim pt As PivotTable
+    Set pt = ActiveSheet.PivotTables(1)
+    
+    With pt
+        ' Filas, columnas y valores
+        .PivotFields("Vendedor").Orientation = xlRowField
+        .PivotFields("Producto").Orientation = xlColumnField
+        .PivotFields("Ventas").Orientation = xlDataField
+        .RefreshTable
+    End With
+End Sub`}
+  lang="VBA"
+  title="Configurar campos"
+/>
+
+<Aside type="tip">
+  Orientaciones: `xlRowField` (filas), `xlColumnField` (columnas), `xlDataField`
+  (valores).
+</Aside>
+
+## Tabla Completa
+
+### Todo en un paso
+
+<Code
+  code={`Sub TablaDinamicaCompleta()
+    ' Datos de ejemplo
+    Range("A1:D11").Value = Array( _
+        Array("Fecha", "Región", "Vendedor", "Venta"), _
+        Array("2024-01-01", "Norte", "Ana", 1200), _
+        Array("2024-01-02", "Sur", "Juan", 800), _
+        Array("2024-01-03", "Este", "Luis", 1500), _
+        Array("2024-01-04", "Norte", "Ana", 900), _
+        Array("2024-01-05", "Oeste", "María", 1100), _
+        Array("2024-01-06", "Sur", "Juan", 750), _
+        Array("2024-01-07", "Este", "Luis", 1300), _
+        Array("2024-01-08", "Norte", "Ana", 950), _
+        Array("2024-01-09", "Oeste", "María", 1050), _
+        Array("2024-01-10", "Sur", "Juan", 850))
+    
+    ' Crear y configurar
+    Dim pt As PivotTable
+    Set pt = ActiveSheet.PivotTables.Add( _
+        ActiveWorkbook.PivotCaches.Create(xlDatabase, Range("A1:D11")), _
+        Range("F1"))
+    
+    With pt
+        .PivotFields("Región").Orientation = xlRowField
+        .PivotFields("Vendedor").Orientation = xlColumnField
+        .PivotFields("Venta").Orientation = xlDataField
+        .PivotFields("Suma de Venta").NumberFormat = "#,##0"
+    End With
+End Sub`}
+  lang="VBA"
+  title="Tabla completa"
+/>
+
+## Filtros y Actualización
+
+### Aplicar filtros
+
+<Code
+  code={`Sub AplicarFiltros()
+    Dim pt As PivotTable
+    Set pt = ActiveSheet.PivotTables(1)
+    
+    With pt
+        ' Filtrar por región específica
+        .PivotFields("Región").PivotItems("Norte").Visible = True
+        .PivotFields("Región").PivotItems("Sur").Visible = False
+        .RefreshTable
+    End With
+End Sub`}
+  lang="VBA"
+  title="Filtrar datos"
+/>
+
+### Actualizar tabla
+
+<Code
+  code={`Sub ActualizarTabla()
+    ' Agregar nuevo dato
+    Range("A12:D12").Value = Array("2024-01-11", "Norte", "Carlos", 1400)
+    
+    ' Actualizar tabla dinámica
+    Dim pt As PivotTable
+    Set pt = ActiveSheet.PivotTables(1)
+    
+    pt.ChangePivotCache ActiveWorkbook.PivotCaches.Create( _
+        xlDatabase, Range("A1:D12"))
+    pt.RefreshTable
+End Sub`}
+  lang="VBA"
+  title="Actualizar datos"
+/>
+
+<Aside type="note">
+  Usa `RefreshTable` cuando cambien los datos existentes, `ChangePivotCache`
+  cuando agregues filas/columnas.
+</Aside>
+
+## Formateo Simple
+
+### Aplicar estilo
+
+<Code
+  code={`Sub FormatearTabla()
+    Dim pt As PivotTable
+    Set pt = ActiveSheet.PivotTables(1)
+    
+    With pt
+        ' Estilo y formato
+        .TableStyle2 = "PivotStyleMedium2"
+        .PivotFields("Suma de Venta").NumberFormat = "$#,##0"
+        .TableRange1.Columns.AutoFit
+        
+        ' Mostrar totales
+        .RowGrand = True
+        .ColumnGrand = True
+    End With
+End Sub`}
+  lang="VBA"
+  title="Formatear tabla"
+/>
+
+## Ejemplo Práctico
+
+Reporte de ventas automático:
+
+<Code
+  code={`Sub ReporteAutomatico()
+    ' Limpiar y preparar datos
+    Cells.Clear
+    Range("A1:D1").Value = Array("Mes", "Producto", "Vendedor", "Venta")
+    
+    ' Datos de ejemplo
+    Dim datos As Variant
+    datos = Array( _
+        Array("Enero", "Laptop", "Ana", 2500), _
+        Array("Enero", "Mouse", "Juan", 45), _
+        Array("Febrero", "Laptop", "Luis", 2200), _
+        Array("Febrero", "Teclado", "Ana", 120), _
+        Array("Marzo", "Monitor", "Juan", 800))
+    
+    Range("A2:D6").Value = datos
+    
+    ' Crear tabla dinámica
+    Dim pt As PivotTable
+    Set pt = ActiveSheet.PivotTables.Add( _
+        ActiveWorkbook.PivotCaches.Create(xlDatabase, Range("A1:D6")), _
+        Range("F2"))
+    
+    With pt
+        .PivotFields("Mes").Orientation = xlRowField
+        .PivotFields("Producto").Orientation = xlColumnField
+        .PivotFields("Venta").Orientation = xlDataField
+        .TableStyle2 = "PivotStyleLight16"
+    End With
+    
+    ' Título del reporte
+    Range("F1").Value = "Reporte de Ventas"
+    Range("F1").Font.Bold = True
+    Range("F1").Font.Size = 14
+End Sub`}
+  lang="VBA"
+  title="Reporte automático"
+/>
+
+## Propiedades Principales
+
+- **`RefreshTable`** - Actualizar datos
+- **`TableRange1`** - Rango sin totales
+- **`TableRange2`** - Rango con totales
+- **`PivotFields`** - Acceso a campos
+- **`RowGrand/ColumnGrand`** - Mostrar totales
+
+## Referencias
+
+<Card title="Documentación Microsoft" icon="external">
+  [PivotTable Object
+  Reference](https://learn.microsoft.com/en-us/office/vba/api/excel.pivottable)
+</Card>
+
+## Siguiente
+
+<CardGrid>
+  <Card title="ListObjects" icon="table">
+    Trabajar con tablas de Excel estructuradas **[Ver ListObjects
+    →](/objects/listobjects/)**
+  </Card>
+</CardGrid>

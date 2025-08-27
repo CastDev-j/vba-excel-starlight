@@ -1,5 +1,247 @@
 ---
-title: Named ranges y constantes
+title: "Named Ranges y Constantes"
+description: "Crear y gestionar rangos nombrados y constantes en Excel"
 order: 9
-
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+} from "@astrojs/starlight/components";
+
+Los rangos nombrados permiten asignar nombres descriptivos a celdas y rangos, haciendo las fórmulas más legibles y el código más mantenible.
+
+## Crear Rangos Nombrados
+
+### Nombre básico
+
+<Code
+  code={`Sub CrearRangoNombrado()
+    ' Datos simples
+    Range("A1:A3").Value = Array(100, 200, 300)
+    
+    ' Crear nombre
+    Names.Add Name:="MisDatos", RefersTo:=Range("A1:A3")
+    
+    ' Usar el nombre
+    MsgBox "Suma: " & Application.Sum(Range("MisDatos"))
+End Sub`}
+  lang="VBA"
+  title="Rango nombrado básico"
+/>
+
+### Múltiples nombres
+
+<Code
+  code={`Sub CrearVariosNombres()
+    ' Datos simples
+    Range("A1").Value = 5000  ' Ingresos
+    Range("A2").Value = 3000  ' Gastos
+    
+    ' Crear nombres
+    Names.Add "Ingresos", Range("A1")
+    Names.Add "Gastos", Range("A2")
+    
+    MsgBox "Nombres creados"
+End Sub`}
+  lang="VBA"
+  title="Múltiples nombres"
+/>
+
+<Aside type="tip">
+  Los nombres pueden referenciar una celda individual, un rango o incluso una
+  fórmula constante.
+</Aside>
+
+## Usar Rangos Nombrados
+
+### Acceder por nombre
+
+<Code
+  code={`Sub UsarRangosNombrados()
+    ' Usar nombres en cálculos
+    Dim utilidad As Double
+    utilidad = Range("Ingresos").Value - Range("Gastos").Value
+    
+    ' Mostrar resultado
+    Range("A3").Value = utilidad
+    MsgBox "Utilidad: $" & utilidad
+End Sub`}
+  lang="VBA"
+  title="Usar nombres en código"
+/>
+
+### Rangos dinámicos
+
+<Code
+  code={`Sub RangoDinamico()
+    ' Lista que puede crecer
+    Range("A1:A4").Value = Array("Laptop", "Mouse", "Teclado", "Monitor")
+    
+    ' Rango que se ajusta automáticamente
+    Names.Add Name:="Productos", RefersTo:="=OFFSET($A$1,0,0,COUNTA($A:$A),1)"
+    
+    ' Contar automáticamente
+    MsgBox "Total productos: " & Range("Productos").Rows.Count
+End Sub`}
+  lang="VBA"
+  title="Rango dinámico"
+/>
+
+## Constantes Nombradas
+
+### Crear constantes
+
+<Code
+  code={`Sub CrearConstantes()
+    ' Constantes comunes
+    ThisWorkbook.Names.Add Name:="IVA", RefersToR1C1:="=0.16"
+    ThisWorkbook.Names.Add Name:="Descuento", RefersToR1C1:="=0.1"
+
+    ' Usar en cálculo
+    Dim precio As Double
+    precio = 1000
+
+    Dim total As Double
+    total = precio * (1 + Evaluate("IVA"))
+    MsgBox "Precio con IVA: $" & total
+End Sub`}
+  lang="VBA"
+  title="Constantes nombradas"
+/>
+
+### Constantes de texto
+
+<Code
+  code={`Sub ConstantesTexto()
+    ' Crear los nombres como constantes de texto
+    ThisWorkbook.Names.Add Name:="Empresa", RefersTo:="=""Mi Empresa SA"""
+    ThisWorkbook.Names.Add Name:="Telefono", RefersTo:="=""555-1234"""
+
+    ' Usar en celdas (valor, no fórmula)
+    Range("A1").Value = Application.Evaluate("Empresa")
+    Range("A2").Value = Application.Evaluate("Telefono")
+    
+    ' (Opcional) si prefieres fórmulas:
+    Range("B1").Formula = "=Empresa"
+    Range("B2").Formula = "=Telefono"
+End Sub`}
+  lang="VBA"
+  title="Constantes de texto"
+/>
+
+<Aside type="note">
+  Para constantes de texto, usar `Chr(34)` para incluir comillas en la
+  definición.
+</Aside>
+
+## Gestionar Nombres
+
+### Listar todos los nombres
+
+<Code
+  code={`Sub ListarNombres()
+    Dim nombre As Name
+    Dim i As Integer
+    
+    i = 1
+    For Each nombre In ActiveWorkbook.Names
+        Cells(i, 1).Value = nombre.Name
+        i = i + 1
+    Next nombre
+    
+    MsgBox "Nombres listados en columna A"
+End Sub`}
+  lang="VBA"
+  title="Listar nombres"
+/>
+
+### Eliminar nombres
+
+<Code
+  code={`Sub EliminarNombre()
+    ' Verificar si existe y eliminar
+    On Error Resume Next
+    Names("MisDatos").Delete
+    On Error GoTo 0
+    
+    MsgBox "Nombre eliminado"
+End Sub`}
+  lang="VBA"
+  title="Eliminar nombres"
+/>
+
+## Ámbito de Nombres
+
+### Nombres locales vs globales
+
+<Code
+  code={`Sub AmbitoNombres()
+    ' Nombre global (todo el libro)
+    ActiveWorkbook.Names.Add Name:="Global", RefersTo:=Range("A1")
+    
+    ' Nombre local (solo esta hoja)
+    ActiveSheet.Names.Add Name:="Local", RefersTo:=Range("B1")
+    
+    MsgBox "Nombres con diferentes ámbitos creados"
+End Sub`}
+  lang="VBA"
+  title="Ámbito de nombres"
+/>
+
+## Validación y Errores
+
+## Ejemplo Práctico
+
+Sistema básico de precios:
+
+<Code
+  code={`Sub SistemaPrecios()
+    ' Configurar constantes
+    Names.Add "PrecioBase", 100
+    Names.Add "IVA", 0.16
+    Names.Add "Descuento", 0.05
+    
+    ' Calcular precio final
+    Dim base As Double, conIVA As Double, final As Double
+    base = Range("PrecioBase").Value
+    conIVA = base * (1 + Range("IVA").Value)
+    final = conIVA * (1 - Range("Descuento").Value)
+    
+    ' Mostrar resultados
+    Range("A1:B4").Value = Array( _
+        Array("Precio Base:", "$" & base), _
+        Array("Con IVA:", "$" & Format(conIVA, "0.00")), _
+        Array("Con Descuento:", "$" & Format(final, "0.00")), _
+        Array("Ahorro:", "$" & Format(conIVA - final, "0.00")))
+End Sub`}
+  lang="VBA"
+  title="Sistema de precios"
+/>
+
+## Propiedades Principales
+
+- **`Names.Add`** - Crear nuevo nombre
+- **`Names(nombre).RefersTo`** - Referencia del nombre
+- **`Names(nombre).Delete`** - Eliminar nombre
+- **`Names(nombre).Name`** - Obtener nombre
+- **`ActiveSheet.Names`** - Nombres locales de la hoja
+
+## Referencias
+
+<Card title="Documentación Microsoft" icon="external">
+  [Names Object
+  Reference](https://learn.microsoft.com/en-us/office/vba/api/excel.names)
+</Card>
+
+## Siguiente
+
+<CardGrid>
+  <Card title="UserForm Objects" icon="star">
+    Crear formularios personalizados para entrada de datos **[Ver UserForms
+    →](/objects/userforms/)**
+  </Card>
+</CardGrid>
