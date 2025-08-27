@@ -1,5 +1,380 @@
 ---
-title: Chart objects - crear/modificar gráficos
+title: "Chart Objects - Crear/Modificar Gráficos"
+description: "Aprende a crear, modificar y formatear gráficos programáticamente en Excel"
 order: 6
-
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+} from "@astrojs/starlight/components";
+
+Los gráficos en VBA te permiten crear visualizaciones automáticamente. Puedes generar reportes con gráficos dinámicos que se actualicen según los datos.
+
+## Crear Gráfico Básico
+
+### Chart simple
+
+Crear tu primer gráfico programáticamente.
+
+<Code
+  code={`Sub CrearGraficoBasico()
+    ' Preparar datos
+    Range("A1").Value = "Mes"
+    Range("B1").Value = "Ventas"
+    Range("A2:A4").Value = Application.Transpose(Array("Ene", "Feb", "Mar"))
+    Range("B2:B4").Value = Application.Transpose(Array(100, 150, 120))
+    
+    ' Crear gráfico
+    Dim miGrafico As Chart
+    Set miGrafico = Charts.Add
+    
+    ' Configurar datos
+    miGrafico.ChartType = xlColumnClustered
+    
+    MsgBox "Gráfico creado"
+End Sub`}
+  lang="VBA"
+  title="Primer gráfico"
+/>
+
+### Gráfico incrustado
+
+Crear gráfico dentro de la hoja de trabajo.
+
+<Code
+  code={`Sub GraficoIncrustado()
+    ' Datos de ejemplo
+    Range("A1:B5").Clear
+    Range("A1").Value = "Producto"
+    Range("B1").Value = "Ventas"
+    Range("A2:A5").Value = Application.Transpose(Array("A", "B", "C", "D"))
+    Range("B2:B5").Value = Application.Transpose(Array(50, 80, 60, 90))
+    
+    ' Crear gráfico incrustado
+    Dim graficoObj As ChartObject
+    Set graficoObj = ActiveSheet.ChartObjects.Add(Left:=250, Top:=50, Width:=300, Height:=200)
+    
+    With graficoObj.Chart
+        .SetSourceData Source:=Range("A1:B5")
+        .ChartType = xlColumnClustered
+        .HasTitle = True
+        .ChartTitle.Text = "Ventas por Producto"
+    End With
+End Sub`}
+  lang="VBA"
+  title="Gráfico en hoja"
+/>
+
+<Aside type="tip">
+  **Gráfico incrustado vs Hoja:** Usa ChartObjects para gráficos dentro de
+  hojas, Charts.Add para hojas separadas.
+</Aside>
+
+## Tipos de Gráficos
+
+### Cambiar tipo
+
+Los tipos más comunes de gráficos.
+
+<Code
+  code={`Sub TiposGraficos()
+    ' Crear datos
+    Range("A1:B4").Clear
+    Range("A1:A4").Value = Application.Transpose(Array("Trim1", "Trim2", "Trim3", "Trim4"))
+    Range("B1:B4").Value = Application.Transpose(Array(100, 120, 110, 140))
+    
+    ' Crear gráfico
+    Dim grafico As ChartObject
+    Set grafico = ActiveSheet.ChartObjects.Add(50, 50, 250, 150)
+    
+    With grafico.Chart
+        .SetSourceData Range("A1:B4")
+        
+        ' Probar diferentes tipos
+        .ChartType = xlColumnClustered    ' Columnas
+        '.ChartType = xlLine              ' Líneas
+        '.ChartType = xlPie               ' Circular
+        '.ChartType = xlArea              ' Área
+        '.ChartType = xlBarClustered      ' Barras horizontales
+    End With
+End Sub`}
+  lang="VBA"
+  title="Tipos de gráfico"
+/>
+
+### Gráfico circular
+
+Especial para mostrar proporciones.
+
+<Code
+  code={`Sub GraficoCircular()
+    ' Datos para gráfico circular
+    Range("A1:B6").Clear
+    Range("A1").Value = "Categoría"
+    Range("B1").Value = "Porcentaje"
+    Range("A2:A6").Value = Application.Transpose(Array("Ventas", "Marketing", "IT", "Admin", "Otros"))
+    Range("B2:B6").Value = Application.Transpose(Array(40, 25, 15, 10, 10))
+    
+    ' Crear gráfico circular
+    Dim grafico As ChartObject
+    Set grafico = ActiveSheet.ChartObjects.Add(300, 50, 200, 200)
+    
+    With grafico.Chart
+        .SetSourceData Range("A1:B6")
+        .ChartType = xlPie
+        .HasTitle = True
+        .ChartTitle.Text = "Distribución por Área"
+        .HasLegend = True
+    End With
+End Sub`}
+  lang="VBA"
+  title="Gráfico circular"
+/>
+
+## Formatear Gráficos
+
+### Títulos y etiquetas
+
+Agregar información descriptiva.
+
+<Code
+  code={`Sub FormatearTitulos()
+    ' Crear gráfico base
+    Dim grafico As ChartObject
+    Set grafico = ActiveSheet.ChartObjects.Add(50, 50, 300, 200)
+    
+    With grafico.Chart
+        .SetSourceData Range("A1:B5")
+        .ChartType = xlColumnClustered
+        
+        ' Título principal
+        .HasTitle = True
+        .ChartTitle.Text = "Ventas Mensuales 2024"
+        .ChartTitle.Font.Size = 14
+        .ChartTitle.Font.Bold = True
+        
+        ' Títulos de ejes
+        .Axes(xlCategory).HasTitle = True
+        .Axes(xlCategory).AxisTitle.Text = "Meses"
+        
+        .Axes(xlValue).HasTitle = True
+        .Axes(xlValue).AxisTitle.Text = "Ventas ($)"
+    End With
+End Sub`}
+  lang="VBA"
+  title="Títulos y ejes"
+/>
+
+### Colores y formato
+
+Personalizar la apariencia visual.
+
+<Code
+  code={`Sub FormatearColores()
+    Dim grafico As ChartObject
+    Set grafico = ActiveSheet.ChartObjects(1)  ' Primer gráfico de la hoja
+    
+    With grafico.Chart
+        ' Color de fondo del gráfico
+        .ChartArea.Interior.Color = RGB(240, 240, 240)
+        
+        ' Color de las series
+        .SeriesCollection(1).Interior.Color = RGB(0, 100, 200)  ' Azul
+        .SeriesCollection(1).Border.Color = RGB(0, 50, 100)     ' Borde azul oscuro
+        
+        ' Formato de leyenda
+        .HasLegend = True
+        .Legend.Position = xlLegendPositionBottom
+        .Legend.Font.Size = 10
+    End With
+End Sub`}
+  lang="VBA"
+  title="Colores personalizados"
+/>
+
+<Aside type="note">
+  **SeriesCollection:** Cada serie de datos en el gráfico tiene su propio índice
+  (1, 2, 3...).
+</Aside>
+
+## Gráficos con Múltiples Series
+
+### Datos múltiples
+
+Comparar varias categorías de datos.
+
+<Code
+  code={`Sub GraficoMultipleSeries()
+    ' Preparar datos con múltiples series
+    Range("A1:D5").Clear
+    Range("A1").Value = "Mes"
+    Range("B1").Value = "Ventas"
+    Range("C1").Value = "Gastos"
+    Range("D1").Value = "Utilidad"
+    
+    ' Datos de ejemplo
+    Range("A2:A5").Value = Application.Transpose(Array("Ene", "Feb", "Mar", "Abr"))
+    Range("B2:B5").Value = Application.Transpose(Array(100, 120, 110, 130))
+    Range("C2:C5").Value = Application.Transpose(Array(60, 70, 65, 75))
+    Range("D2:D5").Value = Application.Transpose(Array(40, 50, 45, 55))
+    
+    ' Crear gráfico
+    Dim grafico As ChartObject
+    Set grafico = ActiveSheet.ChartObjects.Add(50, 100, 350, 200)
+    
+    With grafico.Chart
+        .SetSourceData Range("A1:D5")
+        .ChartType = xlColumnClustered
+        .HasTitle = True
+        .ChartTitle.Text = "Análisis Financiero"
+        .HasLegend = True
+    End With
+End Sub`}
+  lang="VBA"
+  title="Múltiples series"
+/>
+
+## Actualizar Gráficos
+
+### Cambiar datos
+
+Modificar el rango de datos del gráfico.
+
+<Code
+  code={`Sub ActualizarDatos()
+    ' Nuevos datos
+    Range("A1:B6").Clear
+    Range("A1:A6").Value = Application.Transpose(Array("Producto", "A", "B", "C", "D", "E"))
+    Range("B1:B6").Value = Application.Transpose(Array("Ventas", 80, 120, 90, 110, 100))
+    
+    ' Actualizar primer gráfico de la hoja
+    If ActiveSheet.ChartObjects.Count > 0 Then
+        With ActiveSheet.ChartObjects(1).Chart
+            .SetSourceData Range("A1:B6")
+            .ChartTitle.Text = "Ventas Actualizadas - " & Format(Now, "dd/mm/yyyy")
+        End With
+        
+        MsgBox "Gráfico actualizado"
+    Else
+        MsgBox "No hay gráficos en la hoja"
+    End If
+End Sub`}
+  lang="VBA"
+  title="Actualizar gráfico"
+/>
+
+### Eliminar gráficos
+
+Limpiar gráficos existentes.
+
+<Code
+  code={`Sub EliminarGraficos()
+    Dim grafico As ChartObject
+    
+    ' Eliminar todos los gráficos incrustados
+    For Each grafico In ActiveSheet.ChartObjects
+        grafico.Delete
+    Next grafico
+    
+    ' Eliminar hojas de gráficos
+    Dim hoja As Worksheet
+    For Each hoja In Worksheets
+        If hoja.Type = xlChart Then
+            Application.DisplayAlerts = False
+            hoja.Delete
+            Application.DisplayAlerts = True
+        End If
+    Next hoja
+    
+    MsgBox "Gráficos eliminados"
+End Sub`}
+  lang="VBA"
+  title="Limpiar gráficos"
+/>
+
+## Ejemplo Práctico
+
+Dashboard automático con gráficos.
+
+<Code
+  code={`Sub CrearDashboard()
+    ' Limpiar hoja
+    Cells.Clear
+    ActiveSheet.ChartObjects.Delete
+    
+    ' Crear datos de ejemplo
+    Range("A1:B13").Value = Array( _
+        Array("Mes", "Ventas"), _
+        Array("Ene", 1200), Array("Feb", 1350), Array("Mar", 1100), _
+        Array("Abr", 1450), Array("May", 1600), Array("Jun", 1380), _
+        Array("Jul", 1520), Array("Ago", 1680), Array("Sep", 1420), _
+        Array("Oct", 1550), Array("Nov", 1720), Array("Dic", 1800))
+    
+    ' Gráfico 1: Líneas (tendencia)
+    Dim grafico1 As ChartObject
+    Set grafico1 = ActiveSheet.ChartObjects.Add(250, 20, 300, 180)
+    With grafico1.Chart
+        .SetSourceData Range("A1:B13")
+        .ChartType = xlLine
+        .HasTitle = True
+        .ChartTitle.Text = "Tendencia de Ventas"
+        .SeriesCollection(1).Border.Weight = xlThick
+    End With
+    
+    ' Gráfico 2: Columnas (comparación)
+    Dim grafico2 As ChartObject
+    Set grafico2 = ActiveSheet.ChartObjects.Add(250, 220, 300, 180)
+    With grafico2.Chart
+        .SetSourceData Range("A1:B13")
+        .ChartType = xlColumnClustered
+        .HasTitle = True
+        .ChartTitle.Text = "Ventas por Mes"
+        .SeriesCollection(1).Interior.Color = RGB(100, 150, 200)
+    End With
+    
+    ' Formato general
+    Range("A1:B1").Font.Bold = True
+    Range("A1:B13").Borders.LineStyle = xlContinuous
+    Columns("A:B").AutoFit
+    
+    MsgBox "Dashboard creado con éxito"
+End Sub`}
+  lang="VBA"
+  title="Dashboard completo"
+/>
+
+<Aside type="tip">
+  **Dashboard útil:** Combina diferentes tipos de gráficos para mostrar la misma
+  información desde distintas perspectivas.
+</Aside>
+
+## Propiedades Útiles de Chart
+
+- **`ChartType`** - Tipo de gráfico (xlColumn, xlLine, xlPie)
+- **`HasTitle`** - Si tiene título principal
+- **`HasLegend`** - Si muestra leyenda
+- **`SetSourceData`** - Define el rango de datos
+- **`SeriesCollection`** - Acceso a las series de datos
+- **`Axes`** - Configuración de ejes X e Y
+
+## Documentación Microsoft
+
+<Card title="Referencias Oficiales" icon="external">
+
+- [Chart Object](https://learn.microsoft.com/en-us/office/vba/api/excel.chartobject#methods)
+- [ChartObject Object](https://learn.microsoft.com/en-us/office/vba/api/excel.chartobject)
+
+</Card>
+
+## Próximo Paso
+
+<Card title="PivotTable Object" icon="document">
+Aprende a crear y manipular tablas dinámicas programáticamente.
+
+**[Ir a PivotTables →](/objects/pivottables/)**
+
+</Card>
