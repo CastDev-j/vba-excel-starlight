@@ -1,5 +1,247 @@
 ---
-title: TextBox, ComboBox, etc.
+title: "TextBox, ComboBox, etc."
+description: "Controles de formulario para entrada y selección de datos"
 order: 11
-
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+} from "@astrojs/starlight/components";
+
+Los controles son elementos visuales que permiten a los usuarios ingresar datos, hacer selecciones y ejecutar acciones en los UserForms.
+
+## TextBox - Entrada de Texto
+
+### Configurar TextBox básico
+
+<Code
+  code={`Private Sub UserForm_Initialize()
+    With TextBox1
+        .Text = "Texto inicial"
+        .MaxLength = 50
+        .MultiLine = False
+        .PasswordChar = ""
+    End With
+End Sub`}
+  lang="VBA"
+  title="Configuración básica de TextBox"
+/>
+
+### Validar entrada de texto
+
+<Code
+  code={`Private Sub TextBox1_Change()
+    If Len(TextBox1.Text) > 20 Then
+        TextBox1.BackColor = RGB(255, 200, 200)
+    Else
+        TextBox1.BackColor = RGB(255, 255, 255)
+    End If
+End Sub`}
+  lang="VBA"
+  title="Validación en tiempo real"
+/>
+
+<Aside type="tip">
+  Usa el evento `Change` para validación en tiempo real y `Exit` para validación
+  al salir del campo.
+</Aside>
+
+## ComboBox - Lista Desplegable
+
+### Llenar ComboBox con datos
+
+<Code
+  code={`Private Sub UserForm_Initialize()
+    With ComboBox1
+        .AddItem "Opción 1"
+        .AddItem "Opción 2"
+        .AddItem "Opción 3"
+        .ListIndex = 0 ' Seleccionar primera opción
+    End With
+End Sub`}
+  lang="VBA"
+  title="Cargar elementos en ComboBox"
+/>
+
+### Obtener valor seleccionado
+
+<Code
+  code={`Private Sub ComboBox1_Change()
+    Dim seleccion As String
+    seleccion = ComboBox1.Text
+    
+    If seleccion <> "" Then
+        Label1.Caption = "Seleccionaste: " & seleccion
+    End If
+End Sub`}
+  lang="VBA"
+  title="Capturar selección del ComboBox"
+/>
+
+## ListBox - Lista de Selección
+
+### Configurar ListBox múltiple
+
+<Code
+  code={`Private Sub UserForm_Initialize()
+    With ListBox1
+        .MultiSelect = fmMultiSelectMulti
+        .AddItem "Item A"
+        .AddItem "Item B"
+        .AddItem "Item C"
+    End With
+End Sub`}
+  lang="VBA"
+  title="ListBox con selección múltiple"
+/>
+
+### Obtener elementos seleccionados
+
+<Code
+  code={`Private Sub CommandButton1_Click()
+    Dim i As Integer
+    Dim seleccionados As String
+    
+    For i = 0 To ListBox1.ListCount - 1
+        If ListBox1.Selected(i) Then
+            seleccionados = seleccionados & ListBox1.List(i) & ", "
+        End If
+    Next i
+    
+    MsgBox "Seleccionados: " & seleccionados
+End Sub`}
+  lang="VBA"
+  title="Procesar selecciones múltiples"
+/>
+
+<Aside type="note">
+  Para ListBox simple usa `ListBox1.Value`, para múltiple recorre el array
+  `Selected()`.
+</Aside>
+
+## CommandButton - Botones de Acción
+
+### Crear botón con acción
+
+<Code
+  code={`Private Sub CommandButton1_Click()
+    Dim resultado As String
+    resultado = TextBox1.Text
+    
+    If resultado <> "" Then
+        Cells(1, 1).Value = resultado
+        MsgBox "Datos guardados"
+        Me.Hide
+    End If
+End Sub`}
+  lang="VBA"
+  title="Botón para guardar datos"
+/>
+
+### Habilitar/deshabilitar botones
+
+<Code
+  code={`Private Sub TextBox1_Change()
+    If Len(TextBox1.Text) >= 3 Then
+        CommandButton1.Enabled = True
+        CommandButton1.BackColor = RGB(0, 255, 0)
+    Else
+        CommandButton1.Enabled = False
+        CommandButton1.BackColor = RGB(200, 200, 200)
+    End If
+End Sub`}
+  lang="VBA"
+  title="Control dinámico de botones"
+/>
+
+## CheckBox y OptionButton
+
+### Trabajar con CheckBox
+
+<Code
+  code={`Private Sub CheckBox1_Click()
+    If CheckBox1.Value = True Then
+        TextBox1.Enabled = False
+        TextBox1.BackColor = RGB(240, 240, 240)
+    Else
+        TextBox1.Enabled = True
+        TextBox1.BackColor = RGB(255, 255, 255)
+    End If
+End Sub`}
+  lang="VBA"
+  title="CheckBox controlando otros elementos"
+/>
+
+### Agrupar OptionButtons
+
+<Code code={`Private Sub OptionButton1_Click()
+    Label1.Caption = "Opción A seleccionada"
+End Sub
+
+Private Sub OptionButton2_Click()
+Label1.Caption = "Opción B seleccionada"
+End Sub`} lang="VBA" title="Botones de opción mutuamente exclusivos" />
+
+## Ejemplo Práctico
+
+### Formulario de registro completo
+
+<Code
+  code={`Private Sub CommandButton1_Click()
+    Dim nombre As String, edad As String, ciudad As String
+    
+    nombre = TextBox1.Text
+    edad = TextBox2.Text
+    ciudad = ComboBox1.Text
+    
+    If nombre <> "" And edad <> "" And ciudad <> "" Then
+        Range("A1").Value = nombre
+        Range("B1").Value = edad
+        Range("C1").Value = ciudad
+        MsgBox "Registro guardado"
+        Me.Hide
+    Else
+        MsgBox "Complete todos los campos"
+    End If
+End Sub`}
+  lang="VBA"
+  title="Formulario de registro con validación"
+/>
+
+## Controles Principales
+
+- **TextBox** - Entrada de texto
+- **ComboBox** - Lista desplegable
+- **ListBox** - Lista de selección
+- **CommandButton** - Botones de acción
+- **CheckBox** - Casillas de verificación
+- **OptionButton** - Botones de opción
+- **Label** - Etiquetas de texto
+- **Frame** - Marcos agrupadores
+
+## Eventos Comunes
+
+- **Click** - Clic del usuario
+- **Change** - Cambio de valor
+- **Enter/Exit** - Entrada/salida del control
+- **KeyPress** - Pulsación de tecla
+
+## Referencias
+
+<Card title="Documentación Microsoft Controls" icon="external">
+  Guía oficial de controles en UserForms **[Ver documentación
+  →](https://learn.microsoft.com/en-us/office/vba/language/reference/user-interface-help/code-execution-has-been-interrupted)**
+</Card>
+
+## Siguiente
+
+<CardGrid>
+  <Card title="CommandBars" icon="star">
+    Personalizar barras de herramientas **[Ver CommandBars
+    →](/objects/commandbars/)**
+  </Card>
+</CardGrid>

@@ -1,5 +1,161 @@
 ---
-title: UserForms - interfaces de usuario
+title: "UserForms - Interfaces de Usuario"
+description: "Crear formularios personalizados para interactuar con usuarios"
 order: 10
-
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+} from "@astrojs/starlight/components";
+
+Los UserForms permiten crear interfaces gráficas personalizadas para que los usuarios interactúen con tus aplicaciones VBA de manera intuitiva.
+
+## Crear un UserForm
+
+### Insertar nuevo formulario
+
+<Code code={`' En el editor VBA: Insert > UserForm
+' Automáticamente crea UserForm1 con eventos básicos
+
+Private Sub UserForm_Initialize()
+Me.Caption = "Mi Formulario"
+Me.Width = 300
+Me.Height = 200
+End Sub`} lang="VBA" title="Configuración inicial del formulario" />
+
+### Mostrar y ocultar formulario
+
+<Code code={`Sub MostrarFormulario()
+    UserForm1.Show
+End Sub
+
+Sub OcultarFormulario()
+UserForm1.Hide
+' O para cerrar completamente:
+' Unload UserForm1
+End Sub`} lang="VBA" title="Controlar visibilidad del formulario" />
+
+<Aside type="tip">
+  Usa `Show` para mostrar el formulario de manera modal (bloquea otras ventanas)
+  o `Show 0` para no modal.
+</Aside>
+
+## Propiedades Principales
+
+### Configurar apariencia
+
+<Code
+  code={`Private Sub UserForm_Initialize()
+    With Me
+        .Caption = "Entrada de Datos"
+        .Width = 400
+        .Height = 300
+        .StartUpPosition = 1 ' Centrar en pantalla
+        .BorderStyle = fmBorderStyleSingle
+    End With
+End Sub`}
+  lang="VBA"
+  title="Personalizar apariencia del formulario"
+/>
+
+### Controlar comportamiento
+
+<Code
+  code={`Private Sub UserForm_Initialize()
+    With Me
+        .ShowModal = True ' Modal por defecto
+        .Enabled = True
+        .Visible = True
+        .Zoom = 100
+    End With
+End Sub`}
+  lang="VBA"
+  title="Configurar comportamiento del formulario"
+/>
+
+## Eventos del UserForm
+
+### Eventos de ciclo de vida
+
+<Code code={`Private Sub UserForm_Initialize()
+    ' Se ejecuta al cargar el formulario
+    MsgBox "Formulario inicializado"
+End Sub
+
+Private Sub UserForm_Terminate()
+' Se ejecuta al cerrar el formulario
+MsgBox "Formulario cerrado"
+End Sub`} lang="VBA" title="Eventos principales del formulario" />
+
+### Eventos de interacción
+
+<Code code={`Private Sub UserForm_Click()
+    MsgBox "Formulario clickeado"
+End Sub
+
+Private Sub UserForm_Activate()
+' Cuando el formulario obtiene el foco
+Me.BackColor = RGB(240, 240, 255)
+End Sub`} lang="VBA" title="Eventos de usuario" />
+
+<Aside type="caution">
+  El evento `Terminate` se ejecuta después de `QueryClose`, úsalo para limpiar
+  recursos.
+</Aside>
+
+## Ejemplo Práctico
+
+### Formulario de entrada simple
+
+<Code
+  code={`' En el UserForm con TextBox1 y CommandButton1
+Private Sub CommandButton1_Click()
+    Dim nombre As String
+    nombre = TextBox1.Text
+    
+    If nombre <> "" Then
+        MsgBox "Hola " & nombre
+        Me.Hide
+    Else
+        MsgBox "Por favor ingresa tu nombre"
+    End If
+End Sub`}
+  lang="VBA"
+  title="Formulario básico de entrada de datos"
+/>
+
+## Métodos Principales
+
+- **Show** - Mostrar formulario
+- **Hide** - Ocultar formulario
+- **Move** - Cambiar posición
+- **Repaint** - Refrescar apariencia
+- **SetFocus** - Dar foco al formulario
+
+## Propiedades Clave
+
+- **Caption** - Título del formulario
+- **Width/Height** - Dimensiones
+- **StartUpPosition** - Posición inicial
+- **BorderStyle** - Estilo del borde
+- **ShowModal** - Comportamiento modal
+
+## Referencias
+
+<Card title="Documentación Microsoft UserForms" icon="external">
+  Guía oficial de UserForms en VBA **[Ver documentación
+  →](https://docs.microsoft.com/en-us/office/vba/language/reference/user-interface-help/userform-object)**
+</Card>
+
+## Siguiente
+
+<CardGrid>
+  <Card title="Controls" icon="puzzle">
+    Aprende sobre controles para formularios **[Ver Controls
+    →](/objects/controls/)**
+  </Card>
+</CardGrid>

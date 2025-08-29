@@ -1,5 +1,259 @@
 ---
-title: Menús y barras de herramientas
+title: "Menús y Barras de Herramientas"
+description: "Personalizar menús y crear barras de herramientas personalizadas"
 order: 12
-
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+} from "@astrojs/starlight/components";
+
+Los CommandBars permiten personalizar la interfaz de Excel creando menús personalizados y barras de herramientas adaptadas a tus necesidades específicas.
+
+## Crear Barra de Herramientas
+
+### Barra básica con botón
+
+<Code
+  code={`Sub CrearBarraHerramientas()
+    Dim barra As CommandBar
+    Dim boton As CommandBarButton
+    
+    Set barra = CommandBars.Add("MiBarra", msoBarTop)
+    Set boton = barra.Controls.Add(msoControlButton)
+    
+    With boton
+        .Caption = "Mi Botón"
+        .OnAction = "MiMacro"
+        .Style = msoButtonCaption
+    End With
+    
+    barra.Visible = True
+End Sub`}
+  lang="VBA"
+  title="Crear barra de herramientas personalizada"
+/>
+
+### Eliminar barra existente
+
+<Code
+  code={`Sub EliminarBarra()
+    On Error Resume Next
+    CommandBars("MiBarra").Delete
+    On Error GoTo 0
+End Sub`}
+  lang="VBA"
+  title="Eliminar barra de herramientas"
+/>
+
+<Aside type="caution">
+  Siempre usa `On Error Resume Next` al eliminar CommandBars para evitar errores
+  si no existe.
+</Aside>
+
+## Personalizar Menús Existentes
+
+### Agregar elemento al menú
+
+<Code
+  code={`Sub AgregarMenuPersonal()
+    Dim menu As CommandBarPopup
+    Dim item As CommandBarButton
+    
+    Set menu = CommandBars("Worksheet Menu Bar").Controls("Datos")
+    Set item = menu.Controls.Add(msoControlButton, , , , True)
+    
+    With item
+        .Caption = "Mi Función"
+        .OnAction = "MiFuncionPersonal"
+        .BeginGroup = True
+    End With
+End Sub`}
+  lang="VBA"
+  title="Agregar elemento a menú existente"
+/>
+
+### Quitar elemento del menú
+
+<Code
+  code={`Sub QuitarMenuPersonal()
+    On Error Resume Next
+    CommandBars("Worksheet Menu Bar").Controls("Datos") _
+        .Controls("Mi Función").Delete
+    On Error GoTo 0
+End Sub`}
+  lang="VBA"
+  title="Eliminar elemento de menú"
+/>
+
+## Menús Contextuales
+
+### Crear menú contextual
+
+<Code
+  code={`Sub CrearMenuContextual()
+    Dim menu As CommandBar
+    Dim item As CommandBarButton
+    
+    Set menu = CommandBars.Add("MenuPersonal", msoBarPopup, , True)
+    Set item = menu.Controls.Add(msoControlButton)
+    
+    With item
+        .Caption = "Formatear Celda"
+        .OnAction = "FormatearCelda"
+        .FaceId = 71
+    End With
+    
+    menu.ShowPopup
+End Sub`}
+  lang="VBA"
+  title="Menú contextual personalizado"
+/>
+
+### Mostrar menú en evento
+
+<Code
+  code={`Private Sub Worksheet_BeforeRightClick(ByVal Target As Range, Cancel As Boolean)
+    If Target.Count = 1 Then
+        Cancel = True
+        Call CrearMenuContextual
+    End If
+End Sub`}
+  lang="VBA"
+  title="Mostrar menú al hacer clic derecho"
+/>
+
+<Aside type="tip">
+  Usa `FaceId` para agregar iconos predefinidos a tus botones o carga iconos
+  personalizados con `Picture`.
+</Aside>
+
+## Controles Avanzados
+
+### Dropdown con opciones
+
+<Code
+  code={`Sub CrearDropdown()
+    Dim barra As CommandBar
+    Dim dropdown As CommandBarComboBox
+    
+    Set barra = CommandBars.Add("BarraDropdown", msoBarTop)
+    Set dropdown = barra.Controls.Add(msoControlDropdown)
+    
+    With dropdown
+        .Caption = "Seleccionar:"
+        .AddItem "Opción A"
+        .AddItem "Opción B"
+        .AddItem "Opción C"
+        .OnAction = "ProcesarSeleccion"
+    End With
+    
+    barra.Visible = True
+End Sub`}
+  lang="VBA"
+  title="Barra con control dropdown"
+/>
+
+### Procesar selección dropdown
+
+<Code
+  code={`Sub ProcesarSeleccion()
+    Dim seleccion As String
+    seleccion = CommandBars.ActionControl.Text
+    MsgBox "Seleccionaste: " & seleccion
+End Sub`}
+  lang="VBA"
+  title="Capturar selección de dropdown"
+/>
+
+## Estados de Controles
+
+### Habilitar/deshabilitar controles
+
+<Code
+  code={`Sub ControlEstados()
+    Dim boton As CommandBarButton
+    Set boton = CommandBars("MiBarra").Controls("Mi Botón")
+    
+    If Selection.Count > 1 Then
+        boton.Enabled = True
+        boton.Caption = "Procesar Selección"
+    Else
+        boton.Enabled = False
+        boton.Caption = "Selecciona Celdas"
+    End If
+End Sub`}
+  lang="VBA"
+  title="Control dinámico de estados"
+/>
+
+## Ejemplo Práctico
+
+### Barra de herramientas completa
+
+<Code
+  code={`Sub CrearBarraCompleta()
+    Dim barra As CommandBar
+    Dim boton1 As CommandBarButton, boton2 As CommandBarButton
+    
+    On Error Resume Next
+    CommandBars("BarraPersonal").Delete
+    On Error GoTo 0
+    
+    Set barra = CommandBars.Add("BarraPersonal", msoBarTop)
+    
+    Set boton1 = barra.Controls.Add(msoControlButton)
+    With boton1
+        .Caption = "Formatear"
+        .OnAction = "FormatearRango"
+        .FaceId = 71
+    End With
+    
+    Set boton2 = barra.Controls.Add(msoControlButton)
+    With boton2
+        .Caption = "Exportar"
+        .OnAction = "ExportarDatos"
+        .FaceId = 620
+        .BeginGroup = True
+    End With
+    
+    barra.Visible = True
+End Sub`}
+  lang="VBA"
+  title="Barra completa con múltiples botones"
+/>
+
+## Tipos de Controles
+
+- **msoControlButton** - Botón simple
+- **msoControlDropdown** - Lista desplegable
+- **msoControlComboBox** - Cuadro combinado
+- **msoControlPopup** - Menú emergente
+- **msoControlEdit** - Campo de texto
+
+## Posiciones de Barras
+
+- **msoBarTop** - Parte superior
+- **msoBarBottom** - Parte inferior
+- **msoBarLeft** - Lado izquierdo
+- **msoBarRight** - Lado derecho
+- **msoBarPopup** - Menú contextual
+
+## Referencias
+
+<Card title="Documentación Microsoft CommandBars" icon="external">
+  Guía oficial de CommandBars en VBA **[Ver documentación
+  →](https://docs.microsoft.com/en-us/office/vba/api/office.commandbars)**
+</Card>
+
+## Siguiente
+
+<CardGrid>
+  <Card title="Events" icon="list-format">
+    Manejo completo de eventos de Excel **[Ver Events →](/objects/events/)**
+  </Card>
+</CardGrid>

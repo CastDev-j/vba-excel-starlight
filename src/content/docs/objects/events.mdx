@@ -1,5 +1,243 @@
 ---
-title: Event handling - Workbook_Open, etc.
+title: "Event Handling - Workbook_Open, etc."
+description: "Capturar y responder a eventos de Excel automáticamente"
 order: 13
-
 ---
+
+import {
+  Card,
+  CardGrid,
+  Badge,
+  Aside,
+  Code,
+} from "@astrojs/starlight/components";
+
+Los eventos permiten que tu código se ejecute automáticamente cuando ocurren acciones específicas como abrir archivos, cambiar celdas o hacer clic en elementos.
+
+## Eventos de Workbook
+
+### Workbook_Open - Al abrir archivo
+
+<Code
+  code={`Private Sub Workbook_Open()
+    MsgBox "Bienvenido al sistema"
+    
+    ' Configurar hoja activa
+    Worksheets("Datos").Activate
+    Range("A1").Select
+End Sub`}
+  lang="VBA"
+  title="Ejecutar código al abrir el archivo"
+/>
+
+### Workbook_BeforeClose - Antes de cerrar
+
+<Code
+  code={`Private Sub Workbook_BeforeClose(Cancel As Boolean)
+    Dim respuesta As VbMsgBoxResult
+    
+    respuesta = MsgBox("¿Guardar cambios?", vbYesNoCancel)
+    
+    If respuesta = vbCancel Then
+        Cancel = True
+    ElseIf respuesta = vbYes Then
+        Me.Save
+    End If
+End Sub`}
+  lang="VBA"
+  title="Confirmar antes de cerrar archivo"
+/>
+
+<Aside type="tip">
+  Usa `Cancel = True` en eventos "Before" para interrumpir la acción original y
+  mantener el control.
+</Aside>
+
+## Eventos de Worksheet
+
+### Worksheet_Change - Al cambiar celda
+
+<Code
+  code={`Private Sub Worksheet_Change(ByVal Target As Range)
+    If Target.Column = 1 And Target.Row > 1 Then
+        Target.Offset(0, 1).Value = Now
+        Target.Offset(0, 2).Value = Application.UserName
+    End If
+End Sub`}
+  lang="VBA"
+  title="Registrar cambios automáticamente"
+/>
+
+### Worksheet_SelectionChange - Al cambiar selección
+
+<Code
+  code={`Private Sub Worksheet_SelectionChange(ByVal Target As Range)
+    Cells.Interior.Color = xlNone
+    
+    If Target.Count = 1 Then
+        Target.EntireRow.Interior.Color = RGB(255, 255, 200)
+        Target.EntireColumn.Interior.Color = RGB(200, 255, 200)
+    End If
+End Sub`}
+  lang="VBA"
+  title="Resaltar fila y columna activa"
+/>
+
+### Worksheet_BeforeDoubleClick - Antes de doble clic
+
+<Code
+  code={`Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean)
+    If Target.Column = 3 Then
+        Cancel = True
+        Target.Value = InputBox("Nuevo valor:", , Target.Value)
+    End If
+End Sub`}
+  lang="VBA"
+  title="Edición personalizada con doble clic"
+/>
+
+<Aside type="note">
+  Los eventos de Worksheet van en el módulo de código de la hoja específica, no
+  en módulos estándar.
+</Aside>
+
+## Eventos de Application
+
+### Habilitar eventos de aplicación
+
+<Code code={`Public WithEvents App As Application
+
+Sub InicializarEventos()
+Set App = Application
+End Sub
+
+Private Sub App_WorkbookOpen(ByVal Wb As Workbook)
+MsgBox "Se abrió: " & Wb.Name
+End Sub`} lang="VBA" title="Capturar eventos globales de Excel" />
+
+### Evento de cambio en cualquier hoja
+
+<Code
+  code={`Private Sub App_SheetChange(ByVal Sh As Object, ByVal Target As Range)
+    If Sh.Name = "Log" Then Exit Sub
+    
+    Worksheets("Log").Cells(1, 1).Value = _
+        "Cambio en " & Sh.Name & " celda " & Target.Address
+End Sub`}
+  lang="VBA"
+  title="Monitorear cambios globalmente"
+/>
+
+## Eventos de UserForm
+
+### Eventos de inicialización y cierre
+
+<Code code={`Private Sub UserForm_Initialize()
+    Me.Caption = "Formulario - " & Format(Now, "hh:mm")
+    ComboBox1.AddItem "Opción 1"
+    ComboBox1.AddItem "Opción 2"
+End Sub
+
+Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
+If CloseMode = vbFormControlMenu Then
+Cancel = True
+Me.Hide
+End If
+End Sub`} lang="VBA" title="Control de ciclo de vida del formulario" />
+
+## Eventos de Controles
+
+### Eventos de botones y campos
+
+<Code code={`Private Sub CommandButton1_Click()
+    If TextBox1.Text <> "" Then
+        Range("A1").Value = TextBox1.Text
+        Me.Hide
+    End If
+End Sub
+
+Private Sub TextBox1_Enter()
+TextBox1.BackColor = RGB(255, 255, 200)
+End Sub
+
+Private Sub TextBox1_Exit(ByVal Cancel As MSForms.ReturnBoolean)
+TextBox1.BackColor = RGB(255, 255, 255)
+End Sub`} lang="VBA" title="Eventos de controles de formulario" />
+
+## Deshabilitar/Habilitar Eventos
+
+### Control de eventos
+
+<Code
+  code={`Sub ProcesarSinEventos()
+    Application.EnableEvents = False
+    
+    ' Código que no debe disparar eventos
+    Range("A1:A100").Value = "Datos masivos"
+    
+    Application.EnableEvents = True
+End Sub`}
+  lang="VBA"
+  title="Deshabilitar eventos temporalmente"
+/>
+
+## Ejemplo Práctico
+
+### Sistema de auditoría completo
+
+<Code code={`' En el módulo ThisWorkbook
+Private Sub Workbook_Open()
+    Worksheets("Auditoria").Range("A1").Value = _
+        "Archivo abierto: " & Now & " por " & Application.UserName
+End Sub
+
+' En el módulo de la hoja
+Private Sub Worksheet_Change(ByVal Target As Range)
+If Target.Column <= 3 Then
+Application.EnableEvents = False
+
+        Target.Offset(0, 4).Value = Now
+        Target.Offset(0, 5).Value = Application.UserName
+
+        Application.EnableEvents = True
+    End If
+
+End Sub`} lang="VBA" title="Sistema básico de auditoría" />
+
+## Eventos Principales
+
+### Workbook
+
+- **Workbook_Open** - Al abrir archivo
+- **Workbook_BeforeClose** - Antes de cerrar
+- **Workbook_BeforeSave** - Antes de guardar
+- **Workbook_SheetChange** - Cambio en cualquier hoja
+
+### Worksheet
+
+- **Worksheet_Change** - Al cambiar celda
+- **Worksheet_SelectionChange** - Al cambiar selección
+- **Worksheet_BeforeDoubleClick** - Antes de doble clic
+- **Worksheet_Activate** - Al activar hoja
+
+### UserForm
+
+- **UserForm_Initialize** - Al cargar formulario
+- **UserForm_QueryClose** - Antes de cerrar formulario
+- **UserForm_Activate** - Al activar formulario
+
+## Referencias
+
+<Card title="Documentación Microsoft Events" icon="external">
+  Guía completa de eventos en Excel VBA **[Ver documentación
+  →](https://learn.microsoft.com/en-us/office/vba/api/excel.worksheet)**
+</Card>
+
+## Siguiente
+
+<CardGrid>
+  <Card title="Cell Operations" icon="list-format">
+    Técnicas para manipular celdas **[Ver Cell Operations
+    →](/techniques/cell-operations/)**
+  </Card>
+</CardGrid>

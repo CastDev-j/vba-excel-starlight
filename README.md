@@ -67,10 +67,10 @@ src/content/docs/
 │   ├── pivottables.mdx                 ✓
 │   ├── listobjects.mdx                 ✓
 │   ├── names.mdx                       ✓
-│   ├── userforms.mdx                   # UserForms - interfaces de usuario
-│   ├── controls.mdx                    # TextBox, ComboBox, etc.
-│   ├── commandbars.mdx                 # Menús y barras de herramientas
-│   └── events.mdx                      # Event handling - Workbook_Open, etc.
+│   ├── userforms.mdx                   ✓
+│   ├── controls.mdx                    ✓
+│   ├── commandbars.mdx                 ✓
+│   └── events.mdx                      ✓
 ├── techniques/
 │   ├── cell-operations.mdx             # Leer/escribir celdas eficientemente
 │   ├── loops-iterations.mdx            # For Each, optimización de bucles
