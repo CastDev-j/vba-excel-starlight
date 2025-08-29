@@ -66,13 +66,11 @@ export default defineConfig({
 
 				// SECCIÓN 3: MODELO DE OBJETOS DE EXCEL
 				{
-					badge: { text: 'En Desarrollo', variant: 'success' },
 					label: 'Modelo de Objetos Excel',
 					collapsed: true,
 					items: [
 						// Objetos principales
 						{
-							badge: { text: 'terminado', variant: 'note' },
 							label: 'Objetos Fundamentales',
 							collapsed: true,
 							items: [
@@ -85,7 +83,6 @@ export default defineConfig({
 						},
 						// Objetos de datos
 						{
-							badge: { text: 'terminado', variant: 'note' },
 							label: 'Objetos de Datos',
 							collapsed: true,
 							items: [
@@ -97,7 +94,6 @@ export default defineConfig({
 						},
 						// Objetos de interfaz
 						{
-							badge: { text: 'En Desarrollo', variant: 'success' },
 							label: 'Objetos de Interfaz',
 							collapsed: true,
 							items: [
