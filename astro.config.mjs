@@ -282,6 +282,14 @@ export default defineConfig({
 						content: 'La guía más completa de VBA para Excel con ejemplos prácticos',
 					},
 				},
+				{
+					tag: 'script',
+					attrs: { type: 'module' },
+					content: `
+        import { inject } from '@vercel/analytics';
+        inject();
+      `
+				}
 			],
 
 			// Configuración de navegación adicional
