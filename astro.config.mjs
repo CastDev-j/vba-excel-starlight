@@ -6,7 +6,6 @@ import starlight from '@astrojs/starlight';
 import astroExpressiveCode from 'astro-expressive-code'
 import tailwindcss from '@tailwindcss/vite';
 import fs from "node:fs";
-import Analytics from '@vercel/analytics/astro'
 
 const myLang = JSON.parse(fs.readFileSync('./src/assets/vba.json', 'utf-8'));
 
@@ -264,7 +263,6 @@ export default defineConfig({
 
 			// Componentes personalizados para la página de inicio
 			components: {
-				Footer: './src/components/FooterWithAnalytics.astro',
 			},
 
 			// Configuración para el archivo head personalizado
